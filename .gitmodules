@@ -1,0 +1,9 @@
+[submodule "jni/minui"]
+	path = jni/minui
+	url = git@github.com:ftmdevlopment/minui.git
+[submodule "jni/libpng"]
+	path = jni/libpng
+	url = git@github.com:ftmdevlopment/libpng.git
+[submodule "jni/zlib"]
+	path = jni/zlib
+	url = git@github.com:ftmdevlopment/zlib.git
