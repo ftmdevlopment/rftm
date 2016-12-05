@@ -2,9 +2,11 @@
 // Created by dev on 16-12-3.
 //
 
-#include "minui/minui.h"
+#include <math.h>
+#include <string.h>
 
 #include "utils.h"
+#include "minui/minui.h"
 
 void rotate_with(point_t* result, const point_t* source, const point_t* center, double alpha)
 {
@@ -21,7 +23,7 @@ void rotate_with(point_t* result, const point_t* source, const point_t* center, 
     result->x = center->x + x2_;
     result->y = center->y - y2_;
 
-    printf("%s: (%d, %d) --{(%d, %d), %g}--> (%d, %d)\n", __func__,
+    gr_info("(%d, %d) --{(%d, %d), %g}--> (%d, %d)",
            source->x, source->y, center->x, center->y, alpha, result->x, result->y);
 }
 

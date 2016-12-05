@@ -37,6 +37,9 @@ void fill_circle(int x0, int y0, int radius);
 
 void rotate_with(point_t* result, const point_t* source, const point_t* center, double alpha);
 
+#define min(a, b) ((a) < (b) ? (a) : (b))
+#define max(a, b) ((a) > (b) ? (a) : (b))
+
 #ifdef __cplusplus
 }
 #endif
