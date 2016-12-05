@@ -10,13 +10,23 @@
 
 #define msleep(n) usleep((n) * 1000)
 
+UiTest::UiTest(UiBase* main, const char* name)
+        : ui_main_(main), status_(TS_INIT), name_(strdup(name))
+{
+}
+
+UiTest::~UiTest()
+{
+    wait();
+    ::free((void*)name_);
+}
+
 void UiTest::Draw()
 {
     int i, W, H;
     int xa, xb, xc;
     int ya, yb, yc;
 
-    puts(__func__);
     W = gr_fb_width();
     H = gr_fb_height();
 
@@ -34,17 +44,46 @@ void UiTest::Draw()
     }
 }
 
-void UiTest::OnKey(int code, int value)
+void UiTest::OnKey(int value)
 {
-    printf("%s %d %d\n", __func__, code, value);
+    printf("%s %d main: %p\n", __func__, value, ui_main_);
+    UiBase::SetCurrentUI(ui_main_);
 }
 
-void UiTest::OnLeftTouch(int code, int value)
+void UiTest::OnLeftTouch(int value)
 {
-    printf("%s %d %d\n", __func__, code, value);
+    printf("%s %d\n", __func__, value);
 }
 
-void UiTest::OnRightTouch(int code, int value)
+void UiTest::OnRightTouch(int value)
 {
-    printf("%s %d %d\n", __func__, code, value);
+    printf("%s %d\n", __func__, value);
+}
+
+void UiTest::OnAlarm()
+{
+    UiBase::SetCurrentUI(ui_main_);
+}
+
+void UiTest::RunTest()
+{
+    pass();
+}
+
+void* UiTest::do_test(void *thiz)
+{
+    UiTest* pThis = (UiTest*)thiz;
+    pThis->RunTest();
+    return NULL;
+}
+
+void UiTest::start()
+{
+    pthread_create(&worker_, NULL, do_test, this);
+}
+
+
+void UiTest::wait()
+{
+    pthread_join(worker_, NULL);
 }
