@@ -25,10 +25,12 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := rftm
 LOCAL_FORCE_STATIC_EXECUTABLE := true
 LOCAL_MODULE_TAGS := tests
-LOCAL_CFLAGS += -Wno-unused-parameter -std=c++11
+LOCAL_CFLAGS += -Wall -std=c++11
 LOCAL_SRC_FILES := \
     ui_base.cpp \
+    ui_main.cpp \
     ui_test.cpp \
+    utils.cpp \
     main.cpp \
 
 LOCAL_STATIC_LIBRARIES := \

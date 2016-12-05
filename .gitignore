@@ -1,0 +1,11 @@
+obj/
+libs/
+
+*.out
+*.swp
+
+.*
+!.gitignore
+
+cmake*
+*.txt

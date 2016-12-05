@@ -5,28 +5,33 @@
 #ifndef RFTM_UI_MAIN_H
 #define RFTM_UI_MAIN_H
 
-
 #include "ui_base.h"
 #include "utils.h"
+
+#define NCASES 21 // number cases
+#define BORDER 25 // border width
+#define GAPWID 25 // gap width
+#define RACASE 18 // case radius
+#define ARROWH 25 // arrow height
+#define ARROWA (M_PI/12) // arrow angle(rad)
 
 class UiMain : public UiBase
 {
 public:
-    UiMain()
-    {
-        //
-    }
+    static const int kCases = 21;
 
-    ~UiMain();
+    UiMain();
 
 protected:
     void Draw();
 
-    void OnKey(int code, int value);
+    void OnKey(int value);
 
-    void OnLeftTouch(int code, int value);
+    void OnLeftTouch(int value);
 
-    void OnRightTouch(int code, int value);
+    void OnRightTouch(int value);
+
+    void OnAlarm();
 
 private:
     color_t bg_color = {0x00, 0x00, 0x00, 0xff};
@@ -42,14 +47,15 @@ private:
     int border_radius, gap_radius, main_radius;
 
     int focus_case_id;
-    int last_focus_id;
     int case_center_radius;
     int case_radius = RACASE;
     point_t case_centers[NCASES];
-    color_t case_colors[NCASES];
+    color_t* case_colors[NCASES];
 
     int arrow_end_radius;
     triangle_t arrow_places[NCASES];
+
+    UiBase* case1_test_;
 };
 
 
