@@ -10,6 +10,7 @@
 
 class UiBase
 {
+    friend struct GlobalConext;
 public:
     UiBase();
 
@@ -17,34 +18,49 @@ public:
 
     void run();
 
-    void suspend();
+    void set_alarm(long ms);
 
-    void resume();
+    struct Event {
+        uint16_t source;
+        uint32_t value;
+    };
+
+    // for event source:
+    static const uint16_t UI_POWER_KEY = 1;
+    static const uint16_t UI_LEFT_TOUCH = 2;
+    static const uint16_t UI_RIGHT_TOUCH = 4;
+    static const uint16_t UI_UNKNOW = 0;
+
+    // for common settings init:
+    static void SetIgnoreRelease(bool);
+    static void SetExpectedFPS(int);
+
+    // for runtime usage:
+    static void SetRunning(bool);
+    static void SetCurrentUI(UiBase*);
+    static UiBase* GetCurrentUI();
 
 protected:
-    static const int UI_KEY_UP = 0;
-    static const int UI_KEY_DOWN = 1;
-
     virtual void Draw() = 0;
 
-    virtual void OnKey(int code, int value) = 0;
+    virtual void OnKey(int value);
 
-    virtual void OnLeftTouch(int code, int value) = 0;
+    virtual void OnLeftTouch(int value);
 
-    virtual void OnRightTouch(int code, int value) = 0;
+    virtual void OnRightTouch(int value);
 
-    virtual void OnSuspend() {}
+    virtual void OnAlarm();
 
-    virtual void OnResume() {}
+    long last_frame_cost_; // last frame time consumption in microsecond(us).
 
 private:
-
+    static bool s_ignore_release;
+    static bool s_running;
+    static int s_fps_expected;
     static int event_callback(int fd, uint32_t epevents, void *data);
 
-    static void* read_event(void*);
-    static pthread_t event_reader;
-
-    UiBase *last_ui_;  // make Ui stackable
+    struct timespec last_alarm_ts_;
+    long alarm_ms_;
 };
 
 
