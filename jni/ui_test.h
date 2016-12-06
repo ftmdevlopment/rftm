@@ -7,10 +7,9 @@
 
 #include <pthread.h>
 
-#include <stdio.h>
-#include <string.h>
-
+#include "utils.h"
 #include "ui_base.h"
+#include "minui/minui.h"
 
 class UiTest : public UiBase
 {
@@ -34,7 +33,8 @@ public:
 
     void wait();
 
-    inline int get_status() const { return status_; }
+    int state() const { return state_; }
+    const char* name() const { return name_; }
 protected:
     void Draw();
 
@@ -46,17 +46,22 @@ protected:
 
     void OnAlarm();
 
+    void OnEnter();
+
+    void OnLeave();
+
     virtual void RunTest();
-    inline void pass() { status_ = TS_PASSED; }
-    inline void fail() { status_ = TS_FAILED; }
+    inline void pass() { state_ = TS_PASSED; }
+    inline void fail() { state_ = TS_FAILED; }
 
 private:
     static void* do_test(void*);
 
-    pthread_t worker_;
-    UiBase*   ui_main_;
-    int       status_;
+    UiBase*     main_;
+    int         state_;
     const char* name_;
+    bool        started_;
+    pthread_t   worker_;
 };
 
 #endif // RFTM_UI_TEST_H
