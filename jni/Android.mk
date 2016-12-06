@@ -32,6 +32,12 @@ LOCAL_SRC_FILES := \
     ui_test.cpp \
     utils.cpp \
     main.cpp \
+    qrcode/BitBuffer.cpp \
+    qrcode/QrSegment.cpp \
+    qrcode/QrCode.cpp \
+    test/draw_test.cpp \
+
+LOCAL_CPP_FEATURES := exceptions
 
 LOCAL_STATIC_LIBRARIES := \
     libminui \
