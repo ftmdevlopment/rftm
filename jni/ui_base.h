@@ -18,7 +18,9 @@ public:
 
     void run();
 
-    void set_alarm(long ms);
+    void set_alarm(long s);
+
+    void set_alarm_ms(long ms);
 
     struct Event {
         uint16_t source;
@@ -50,6 +52,12 @@ protected:
     virtual void OnRightTouch(int value);
 
     virtual void OnAlarm();
+
+    // calling when enter this UI
+    virtual void OnEnter();
+
+    // calling when leave this UI
+    virtual void OnLeave();
 
     long last_frame_cost_; // last frame time consumption in microsecond(us).
 

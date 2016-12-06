@@ -32,6 +32,8 @@ bool UiBase::s_running = true;
 bool UiBase::s_ignore_release = false;
 
 static int iInstanceCount = 0;
+static UiBase *pLeaveUi = NULL;
+static UiBase *pEnterUi = NULL;
 static UiBase *pCurrentUi = NULL;
 
 struct GlobalConext
@@ -66,6 +68,8 @@ void UiBase::SetIgnoreRelease(bool ignore)
 
 void UiBase::SetCurrentUI(UiBase *ui)
 {
+    pLeaveUi = pCurrentUi;
+    pEnterUi = ui;
     pCurrentUi = ui;
 }
 
@@ -105,6 +109,15 @@ void UiBase::OnAlarm()
     gr_info("alarm ms: %d, ts: %ld, %ld", alarm_ms_, last_alarm_ts_.tv_sec, last_alarm_ts_.tv_nsec);
 }
 
+void UiBase::OnEnter()
+{
+    gr_info("enter %p", this);
+}
+
+void UiBase::OnLeave()
+{
+    gr_info("leave %p", this);
+}
 
 int UiBase::event_callback(int fd, uint32_t epevents, void *data)
 {
@@ -186,7 +199,12 @@ static inline long diff_timespec_us(const struct timespec* end, const struct tim
     return (end->tv_sec - start->tv_sec) * US_PER_S + (end->tv_nsec - start->tv_nsec) / NS_PER_US;
 }
 
-void UiBase::set_alarm(long ms)
+void UiBase::set_alarm(long s)
+{
+    return set_alarm_ms(s*1000);
+}
+
+void UiBase::set_alarm_ms(long ms)
 {
     alarm_ms_ = ms;
     clock_gettime(CLOCK_REALTIME, &last_alarm_ts_);
@@ -194,22 +212,34 @@ void UiBase::set_alarm(long ms)
 
 void UiBase::run()
 {
-    UiBase::SetCurrentUI(this);
-
     pthread_create(&event_reader, NULL, read_event, NULL);
 
+    UiBase::SetCurrentUI(this);
     // main thread draw frames, merge and handle events etc ...
-
     struct timespec ts_start, ts_end;
     long expected_cost_us = US_PER_S / s_fps_expected;
 
     while (s_running) {
         clock_gettime(CLOCK_REALTIME, &ts_start);
 
+        // check and fire enter/leave callback
+        if (pLeaveUi) {
+            UiBase* p = pLeaveUi;
+            pLeaveUi = NULL;
+            p->OnLeave(); // may call SetCurrentUI
+        }
+        if (pEnterUi) {
+            UiBase* p = pEnterUi;
+            pEnterUi = NULL;
+            p->last_alarm_ts_ = ts_start; // refresh alarm start
+            p->OnEnter();
+        }
+
         // check and handle alarm
-        long diff_ms = diff_timespec_us(&ts_start, &last_alarm_ts_)/US_PER_MS;
+        long diff_ms = diff_timespec_us(&ts_start, &pCurrentUi->last_alarm_ts_)/US_PER_MS;
         if (pCurrentUi->alarm_ms_ > 0 && diff_ms >= pCurrentUi->alarm_ms_) {
             pCurrentUi->alarm_ms_ = 0; // means alarmed
+//            gr_info("alarm timestamp: %ld %ld", pCurrentUi->last_alarm_ts_.tv_sec, pCurrentUi->last_alarm_ts_.tv_nsec);
             pCurrentUi->OnAlarm(); // OnAlarm maybe recall set_alarm, so DO NOT MOVE IT UP.
         }
 
