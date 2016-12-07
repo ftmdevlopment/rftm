@@ -6,6 +6,7 @@
 #define RFTM_UI_TEST_H
 
 #include <pthread.h>
+#include <string>
 
 #include "utils.h"
 #include "ui_base.h"
@@ -33,8 +34,12 @@ public:
 
     void wait();
 
-    int state() const { return state_; }
     const char* name() const { return name_; }
+    const char* state_str() const;
+    int state() const;
+    void state(int s);
+    std::string result() const;
+    void result(std::string r);
 protected:
     void Draw();
 
@@ -51,8 +56,8 @@ protected:
     void OnLeave();
 
     virtual void RunTest();
-    inline void pass() { state_ = TS_PASSED; }
-    inline void fail() { state_ = TS_FAILED; }
+    inline void pass() { state(TS_PASSED); }
+    inline void fail() { state(TS_FAILED); }
 
 private:
     static void* do_test(void*);
@@ -60,8 +65,13 @@ private:
     UiBase*     main_;
     int         state_;
     const char* name_;
-    bool        started_;
+    std::string result_;
+    bool        done_;
     pthread_t   worker_;
+    mutable pthread_mutex_t mutex_;
 };
+
+#define UITEST_ENTRY(Class) \
+    Class(UiBase* main, const char* name) : UiTest(main, name)
 
 #endif // RFTM_UI_TEST_H

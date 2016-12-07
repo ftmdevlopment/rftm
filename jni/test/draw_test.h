@@ -14,8 +14,6 @@ public:
 
 private:
     void Draw();
-
-    int id_;
 };
 
 
