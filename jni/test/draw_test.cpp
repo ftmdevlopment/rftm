@@ -27,6 +27,6 @@ void DrawTest::Draw()
     gr_color(   0,   0,   0, 255);
     char text[64];
     snprintf(text, sizeof(text), "DrawTest_%d", id_);
-    fill_text(W/2, H/2, text);
+    fill_text(W/2, H/2, text, 1);
     gr_flip();
 }

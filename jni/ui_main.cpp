@@ -169,7 +169,7 @@ void UiMain::Draw()
         char text[64];
         snprintf(text, sizeof(text), "%d", i);
         set_color(&font_color);
-        fill_text(c[i].x, c[i].y, text);
+        fill_text(c[i].x, c[i].y, text, 1);
     }
 
     gr_flip();

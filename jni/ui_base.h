@@ -42,9 +42,9 @@ public:
     static void SetCurrentUI(UiBase*);
     static UiBase* GetCurrentUI();
 
-protected:
     virtual void Draw() = 0;
 
+protected:
     virtual void OnKey(int value);
 
     virtual void OnLeftTouch(int value);

@@ -5,6 +5,16 @@
 #ifndef RFTM_UTILS_H
 #define RFTM_UTILS_H
 
+#include <string>
+#include <algorithm>
+using std::max;
+using std::min;
+
+int read_file(const char* name, std::string* result);
+int write_file(const char* name, std::string content);
+
+int run_command(const char* cmd, std::string* out);
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -18,7 +28,12 @@ typedef struct point point_t;
 
 struct triangle
 {
-    point_t a, b, c;
+    union {
+        struct {
+            point_t a, b, c;
+        };
+        point_t p[3];
+    };
 };
 typedef struct triangle triangle_t;
 
@@ -31,14 +46,14 @@ typedef struct color color_t;
 
 
 void set_color(const color_t* c);
-void fill_text(int x, int y, const char* text);
+void fill_text(int x, int y, const char* text, int bold);
 void fill_image(int x, int y, const char* name);
 void fill_circle(int x0, int y0, int radius);
+void fill_ring(int x0, int y0, int r1, int r2);
+void fill_triangle(const triangle_t* t);
 
+bool in_triangle(const triangle_t* t, int x, int y);
 void rotate_with(point_t* result, const point_t* source, const point_t* center, double alpha);
-
-#define min(a, b) ((a) < (b) ? (a) : (b))
-#define max(a, b) ((a) > (b) ? (a) : (b))
 
 #ifdef __cplusplus
 }

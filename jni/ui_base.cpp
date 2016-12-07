@@ -245,6 +245,7 @@ void UiBase::run()
 
         // draw frame
         pCurrentUi->Draw();
+        gr_flip();
 
         // merge and handle events
         Event event;
