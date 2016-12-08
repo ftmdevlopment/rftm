@@ -31,39 +31,6 @@ static const int kQRBorderWidth = 8;
 
 static const char* kDefaultQrText = "846425A00481,010116000978,0a22,2.1.3,111,212000010000000000,,,00000bf0";
 
-void UiMain::split_result(std::string* lines, const std::string& result)
-{
-#if 0
-    if (result.find('\n') != std::string::npos) {
-        // by '\n'
-        std::string::size_type last = 0, next = 0;
-        for (int i = 0; i < kResultLines; i++) {
-            next = result.find('\n', last);
-            if (next == std::string::npos) next = result.size();
-            lines[i] = result.substr(last, next-last);
-            if (next == result.size()) break;
-            last = next;
-        }
-    } else {
-        // by max chars
-        for (int i = 0, c = 0; i < kResultLines; i++) {
-            lines[i] = result.substr(c, kResultLineMaxChars);
-            c += kResultLineMaxChars;
-            if (c >= result.length()) break;
-        }
-    }
-#endif
-
-    std::string::size_type last = 0, next = 0;
-    for (int i = 0; i < kResultLines; i++) {
-        next = result.find('\n', last);
-        if (next == std::string::npos) next = result.size();
-        lines[i] = result.substr(last, next - last);
-        if (next == result.size()) break;
-        last = ++next;
-    }
-}
-
 void UiMain::draw_main()
 {
     // test state, name, result
@@ -73,7 +40,8 @@ void UiMain::draw_main()
 
     // split to lines
     std::string lines[kResultLines];
-    split_result(lines, tests_[focus_case_id]->result());
+    std::string result = tests_[focus_case_id]->result();
+    split_string(lines, kResultLines, result, '\n', kResultLineMaxChars);
 
     // draw each line.
     for (int i = 0; i < kResultLines; i++) {
@@ -179,15 +147,6 @@ UiMain::UiMain()
     printf("main_radius: %d\n", main_radius);
     printf("case_radius: %d\n", case_radius);
     printf("case_center_radius: %d\n", case_center_radius);
-
-    {
-        std::string result = "UiTest::RunTest\ndone\n3\n4\n5\n6\n7";
-        std::string lines[kResultLines];
-        split_result(lines, result);
-        for (int i = 0; i < kResultLines; i++) {
-            printf("lines[%d]: `%s`\n", i, lines[i].c_str());
-        }
-    }
 }
 
 UiMain::~UiMain()

@@ -37,7 +37,6 @@ protected:
 
 private:
     void draw_main();
-    static void split_result(std::string* lines, const std::string& result);
 
 private:
     color_t bg_color = {0x00, 0x00, 0x00, 0xff};
