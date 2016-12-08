@@ -8,6 +8,7 @@
 #include <pthread.h>
 #include <string>
 
+#include "log.h"
 #include "utils.h"
 #include "ui_base.h"
 #include "minui/minui.h"

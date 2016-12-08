@@ -5,6 +5,7 @@
 #include <math.h>
 #include <stdio.h>
 
+#include "log.h"
 #include "utils.h"
 #include "minui/minui.h"
 #include "qrcode/QrCode.hpp"
@@ -211,33 +212,33 @@ void UiMain::Draw()
 void UiMain::OnLeftTouch(int value)
 {
     focus_case_id = (kCases + focus_case_id - 1) % kCases;
-    gr_info("focus: %d", focus_case_id);
+    XLOGI("focus: %d", focus_case_id);
 }
 
 void UiMain::OnRightTouch(int value)
 {
     focus_case_id = (focus_case_id + 1) % kCases;
-    gr_info("focus: %d", focus_case_id);
+    XLOGI("focus: %d", focus_case_id);
 }
 
 void UiMain::OnKey(int value)
 {
-    gr_info("switch to test %d\n", focus_case_id);
+    XLOGI("switch to test %d\n", focus_case_id);
     UiBase::SetCurrentUI(tests_[focus_case_id]);
 }
 
 void UiMain::OnAlarm()
 {
-    gr_info("alarm %d", clock());
+    XLOGI("alarm %ld", clock());
     set_alarm(1);
 }
 
 void UiMain::OnEnter()
 {
-    gr_info("enter %p", this);
+    XLOGI("enter %p", this);
 }
 
 void UiMain::OnLeave()
 {
-    gr_info("leave %p", this);
+    XLOGI("leave %p", this);
 }

@@ -40,34 +40,34 @@ void UiTest::Draw()
 
 void UiTest::OnKey(int value)
 {
-    gr_info("%s %d main: %p\n", __func__, value, main_);
+    XLOGI("%s %d main: %p\n", __func__, value, main_);
 //    UiBase::SetCurrentUI(main_);
 }
 
 void UiTest::OnLeftTouch(int value)
 {
-    gr_info("%s %d\n", __func__, value);
+    XLOGI("%s %d\n", __func__, value);
     fail();
     SetCurrentUI(main_);
 }
 
 void UiTest::OnRightTouch(int value)
 {
-    gr_info("%s %d\n", __func__, value);
+    XLOGI("%s %d\n", __func__, value);
     pass();
     SetCurrentUI(main_);
 }
 
 void UiTest::OnAlarm()
 {
-    gr_info("alarm");
+    XLOGI("alarm");
     UiBase::SetCurrentUI(main_);
 }
 
 void UiTest::OnEnter()
 {
     set_alarm(10);
-    gr_info("enter %p start test", this);
+    XLOGI("enter %p start test", this);
     state(TS_TESTING);
     result("");
     start();
@@ -75,7 +75,7 @@ void UiTest::OnEnter()
 
 void UiTest::OnLeave()
 {
-    gr_info("leave %p wait test finish", this);
+    XLOGI("leave %p wait test finish", this);
     if (state() == TS_TESTING) {
         wait();
         result("");
@@ -85,7 +85,7 @@ void UiTest::OnLeave()
 
 void UiTest::RunTest()
 {
-    gr_info("Running");
+    XLOGI("Running");
     result("UiTest::RunTest\ndone\n3\n4\n5\n6\n7");
 }
 

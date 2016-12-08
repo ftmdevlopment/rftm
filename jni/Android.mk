@@ -32,6 +32,7 @@ LOCAL_SRC_FILES := \
     ui_test.cpp \
     utils.cpp \
     main.cpp \
+    log.cpp \
     qrcode/BitBuffer.cpp \
     qrcode/QrSegment.cpp \
     qrcode/QrCode.cpp \
@@ -46,6 +47,8 @@ LOCAL_STATIC_LIBRARIES := \
     libz \
     libstdc++ \
     libc
+
+LOCAL_LDLIBS    := -llog
 
 include $(BUILD_EXECUTABLE)
 

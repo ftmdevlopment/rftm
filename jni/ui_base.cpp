@@ -12,6 +12,7 @@
 
 #include <map>
 
+#include "log.h"
 #include "ui_base.h"
 #include "minui/minui.h"
 #include "blocking_queue.h"
@@ -91,32 +92,32 @@ UiBase::~UiBase()
 
 void UiBase::OnKey(int value)
 {
-    gr_info("value: %d last_frame_cost_: % 6d", value, last_frame_cost_);
+    XLOGI("value: %d last_frame_cost_: % 6d", value, last_frame_cost_);
 }
 
 void UiBase::OnLeftTouch(int value)
 {
-    gr_info("value: %d", value);
+    XLOGI("value: %d", value);
 }
 
 void UiBase::OnRightTouch(int value)
 {
-    gr_info("value: %d", value);
+    XLOGI("value: %d", value);
 }
 
 void UiBase::OnAlarm()
 {
-    gr_info("alarm ms: %d, ts: %ld, %ld", alarm_ms_, last_alarm_ts_.tv_sec, last_alarm_ts_.tv_nsec);
+    XLOGI("alarm ms: %d, ts: %ld, %ld", alarm_ms_, last_alarm_ts_.tv_sec, last_alarm_ts_.tv_nsec);
 }
 
 void UiBase::OnEnter()
 {
-    gr_info("enter %p", this);
+    XLOGI("enter %p", this);
 }
 
 void UiBase::OnLeave()
 {
-    gr_info("leave %p", this);
+    XLOGI("leave %p", this);
 }
 
 int UiBase::event_callback(int fd, uint32_t epevents, void *data)
@@ -129,7 +130,7 @@ int UiBase::event_callback(int fd, uint32_t epevents, void *data)
     snprintf(proc, sizeof(proc), "/proc/self/fd/%d", fd);
     readlink(proc, path, sizeof(path));
 
-//    gr_info("type: %x, code: %x, value: %x @ path: %s", ev.type, ev.code, ev.value, path);
+//    XLOGI("type: %x, code: %x, value: %x @ path: %s", ev.type, ev.code, ev.value, path);
 
     if (ev.type == EV_SYN) return 0;
     if (s_ignore_release && ev.value == 0) return 0;
@@ -239,7 +240,7 @@ void UiBase::run()
         long diff_ms = diff_timespec_us(&ts_start, &pCurrentUi->last_alarm_ts_)/US_PER_MS;
         if (pCurrentUi->alarm_ms_ > 0 && diff_ms >= pCurrentUi->alarm_ms_) {
             pCurrentUi->alarm_ms_ = 0; // means alarmed
-//            gr_info("alarm timestamp: %ld %ld", pCurrentUi->last_alarm_ts_.tv_sec, pCurrentUi->last_alarm_ts_.tv_nsec);
+//            XLOGI("alarm timestamp: %ld %ld", pCurrentUi->last_alarm_ts_.tv_sec, pCurrentUi->last_alarm_ts_.tv_nsec);
             pCurrentUi->OnAlarm(); // OnAlarm maybe recall set_alarm, so DO NOT MOVE IT UP.
         }
 
@@ -271,7 +272,7 @@ void UiBase::run()
         last_frame_cost_ = cost_us;
         long pad = expected_cost_us - cost_us;
         while (pad < 0) pad += expected_cost_us;
-//        gr_info("frame cost actual: %06d, expected %06d, pad: %06d", cost_us, expected_cost_us, pad);
+//        XLOGI("frame cost actual: %06d, expected %06d, pad: %06d", cost_us, expected_cost_us, pad);
         usleep(pad);
     }
 
