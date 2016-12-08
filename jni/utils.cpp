@@ -131,27 +131,20 @@ void fill_triangle(const triangle_t* t)
     }
 }
 
-int read_file(const char* name, std::string* result)
+int read_file(const char* name, std::string* result, int expected)
 {
     long size = 0;
-#if 0
-    std::shared_ptr<FILE> sp(fopen(name, "rb"), fclose);
-    if (!result || !stream) return -1;
 
-    fseek(stream.get(), 0, SEEK_END);
-    size = ftell(stream.get());
-    fseek(stream.get(), 0, SEEK_SET);
-
-    std::shared_ptr<char> buffer((char*)malloc(size), free);
-    int count = fread(buffer.get(), 1, size, stream.get());
-    *result = buffer.get();
-#else
     FILE* stream = fopen(name, "rb");
     if (!result || !stream) return -1;
 
-    fseek(stream, 0, SEEK_END);
-    size = ftell(stream);
-    fseek(stream, 0, SEEK_SET);
+    if (expected) {
+        size = expected;
+    } else {
+        fseek(stream, 0, SEEK_END);
+        size = ftell(stream);
+        fseek(stream, 0, SEEK_SET);
+    }
 
     char* buffer = (char*)malloc(size);
     int count = fread(buffer, 1, size, stream);
@@ -159,27 +152,20 @@ int read_file(const char* name, std::string* result)
     *result = buffer;
     free(buffer);
     fclose(stream);
-#endif
     return count;
 }
 
 int write_file(const char* name, std::string content)
 {
-#if 0
-    std::shared_ptr<FILE> stream(fopen(name, "wb+"), fclose);
-    if (!stream) return -1;
-    int count = fwrite(&content[0], 1, content.size()+1, stream.get());
-#else
     FILE* stream = fopen(name, "wb+");
     if (!stream) return -1;
     int count = fwrite(&content[0], 1, content.size()+1, stream);
     fclose(stream);
-#endif
     return count;
 }
 
-static int read_write_test()
-{
+#if 0
+static int __read_write_test__ = []() {
     std::string content, actual;
     for (int i = 0; i < 1000; i++) {
         content += "0123456789ABCDEF"[i % 16];
@@ -189,9 +175,8 @@ static int read_write_test()
     printf("write: %lu %s\n", content.size(), content.c_str());
     printf("read: %lu %s\n", actual.size(), actual.c_str());
     return 0;
-}
-
-//static int __test_stub__ = read_write_test();
+}();
+#endif
 
 int run_command(const char* cmd, std::string* out)
 {
@@ -200,7 +185,7 @@ int run_command(const char* cmd, std::string* out)
     FILE* p = popen(cmd, "r");
     if (!p) perror("popen");
 
-    out->resize(0);
+    out->clear();
     char buffer[1024] = {0};
     while (fgets(buffer, sizeof(buffer), p)) {
         *out += buffer;
@@ -209,4 +194,46 @@ int run_command(const char* cmd, std::string* out)
     fclose(p);
     return out->length();
 }
+
+int split_string(std::string* out, int size, const std::string& in, const char sep, const int max)
+{
+    std::string::size_type last = 0, next = 0;
+    for (int i = 0; i < size; i++) {
+        next = in.find(sep, last);
+        if (next == std::string::npos) {
+            next = in.size();
+        }
+
+        bool broken = false;
+        if (max > 0 && next > last + max) {
+            next = last + max;
+            broken = true;  // reach line limit
+        }
+
+        out[i] = in.substr(last, next - last);
+        if (next >= in.size()) {
+            return i;
+        }
+
+        last = next;
+        if (!broken) ++last; // skip separator
+    }
+    return size;
+}
+
+#if 0
+static int __split_string_test__ = []() {
+    std::string input = "UiTest::RunTestUiTest::RunTest\ndone\n3\n4\n5\n6\n7";
+    std::string output[5];
+    split_string(output, 5, input, '\n', 20);
+    for (int i = 0; i < 5; i++) {
+        printf("output[%d]: `%s`\n", i, output[i].c_str());
+    }
+    split_string(output, 5, input, '\n');
+    for (int i = 0; i < 5; i++) {
+        printf("output[%d]: `%s`\n", i, output[i].c_str());
+    }
+    return 0;
+}();
+#endif
 
