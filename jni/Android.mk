@@ -36,6 +36,7 @@ LOCAL_SRC_FILES := \
     qrcode/QrSegment.cpp \
     qrcode/QrCode.cpp \
     test/draw_test.cpp \
+    test/triangle_test.cpp \
 
 LOCAL_CPP_FEATURES := exceptions
 

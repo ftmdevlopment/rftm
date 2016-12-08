@@ -11,7 +11,7 @@
 #include "ui_main.h"
 #include "ui_test.h"
 #include "test/draw_test.h"
-
+#include "test/triangle_test.h"
 
 using qrcodegen::QrCode;
 
@@ -136,6 +136,7 @@ UiMain::UiMain()
     memset(tests_, 0, sizeof(tests_));
 
     int count = 0;
+    tests_[count++] = new TirangleTest(this, "TriangleTest");
     for (int i = count; i < kCases; i++) {
         char name[64];
         snprintf(name, sizeof(name), "DrawTest-%d", i);
