@@ -15,6 +15,7 @@ int write_file(const char* name, std::string content);
 
 int run_command(const char* cmd, std::string* out);
 int split_string(std::string* out, int size, const std::string& in, const char sep = ' ', const int max = 0);
+std::string trim_string(std::string input);
 
 #ifdef __cplusplus
 extern "C" {

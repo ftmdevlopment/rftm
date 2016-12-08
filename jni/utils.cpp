@@ -3,6 +3,7 @@
 //
 
 #include <math.h>
+#include <ctype.h>
 #include <string.h>
 
 #include "utils.h"
@@ -233,6 +234,27 @@ static int __split_string_test__ = []() {
     for (int i = 0; i < 5; i++) {
         printf("output[%d]: `%s`\n", i, output[i].c_str());
     }
+    return 0;
+}();
+#endif
+
+std::string trim_string(std::string input)
+{
+    if (input.empty()) return input;
+
+    std::string::size_type begin = 0, end = input.size();
+    while (isspace(input[begin])) begin++;
+    while (isspace(input[end-1])) end--;
+    if (begin < end) {
+        return input.substr(begin, end - begin);
+    }
+    return "";
+}
+
+#if 0
+static int __trim_string_test__ = []() {
+    std::string s = "\t\n \ra b c     ";
+    printf("begin trim: `%s`, after: `%s`\n", s.c_str(), trim_string(s).c_str());
     return 0;
 }();
 #endif
