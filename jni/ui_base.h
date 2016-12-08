@@ -7,6 +7,7 @@
 
 #include <pthread.h>
 #include <stdint.h>
+#include <linux/input.h>
 
 class UiBase
 {
@@ -25,6 +26,9 @@ public:
     struct Event {
         uint16_t source;
         uint32_t value;
+        int fd;
+        struct input_event ev;
+        void* data;
     };
 
     // for event source:
@@ -45,6 +49,8 @@ public:
     virtual void Draw() = 0;
 
 protected:
+    virtual void OnEvent(int fd, struct input_event* ev, void* data);
+
     virtual void OnKey(int value);
 
     virtual void OnLeftTouch(int value);

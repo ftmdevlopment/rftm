@@ -120,6 +120,11 @@ void UiBase::OnLeave()
     XLOGI("leave %p", this);
 }
 
+void UiBase::OnEvent(int fd, struct input_event* ev, void* data)
+{
+    gr_info("fd: %d, ev: {type: 0x%X, code: 0x%X, value: 0x%X}, data: %p", fd, ev->type, ev->code, ev->value, data);
+}
+
 int UiBase::event_callback(int fd, uint32_t epevents, void *data)
 {
     struct input_event ev;
@@ -132,9 +137,6 @@ int UiBase::event_callback(int fd, uint32_t epevents, void *data)
 
 //    XLOGI("type: %x, code: %x, value: %x @ path: %s", ev.type, ev.code, ev.value, path);
 
-    if (ev.type == EV_SYN) return 0;
-    if (s_ignore_release && ev.value == 0) return 0;
-
     UiBase::Event event;
     if (ev.type == EV_KEY) {
         event.source = UiBase::UI_POWER_KEY;
@@ -146,6 +148,10 @@ int UiBase::event_callback(int fd, uint32_t epevents, void *data)
         event.source = UiBase::UI_UNKNOW;
     }
     event.value = ev.value;
+    event.fd = fd;
+    event.ev = ev;
+    event.data = data;
+
     event_queue.put(event);
 
     return 0;
@@ -250,7 +256,17 @@ void UiBase::run()
 
         // merge and handle events
         Event event;
-        if (merge_events(&event, event_queue.peek_all())) {
+        bool ignore = false;
+        bool merged = merge_events(&event, event_queue.peek_all());
+        if (merged) {
+            int type = event.ev.type;
+            int value = event.ev.value;
+            if (s_ignore_release && (type == EV_KEY || type == EV_ABS) && value == 0) {
+                ignore = true;
+            }
+        }
+        if (merged && !ignore) {
+            pCurrentUi->OnEvent(event.fd, &event.ev, event.data);
             switch (event.source) {
                 case UiBase::UI_POWER_KEY:
                     pCurrentUi->OnKey(event.value);
@@ -260,6 +276,8 @@ void UiBase::run()
                     break;
                 case UiBase::UI_RIGHT_TOUCH:
                     pCurrentUi->OnRightTouch(event.value);
+                    break;
+                case UiBase::UI_UNKNOW:
                     break;
                 default:
                     break;
