@@ -40,6 +40,7 @@ LOCAL_SRC_FILES := \
     test/triangle_test.cpp \
     test/version_test.cpp \
     test/fan_test.cpp \
+    test/key_test.cpp \
 
 LOCAL_CPP_FEATURES := exceptions
 

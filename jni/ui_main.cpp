@@ -14,6 +14,7 @@
 #include "test/triangle_test.h"
 #include "test/version_test.h"
 #include "test/fan_test.h"
+#include "test/key_test.h"
 
 using qrcodegen::QrCode;
 
@@ -141,6 +142,7 @@ UiMain::UiMain()
     tests_[count++] = new TirangleTest(this, "TriangleTest");
     tests_[count++] = new VersionTest(this, "Version test");
     tests_[count++] = new FanTest(this, "Fan test");
+    tests_[count++] = new KeyTest(this, "Key test");
     for (int i = count; i < kCases; i++) {
         char name[64];
         snprintf(name, sizeof(name), "DrawTest-%d", i);
