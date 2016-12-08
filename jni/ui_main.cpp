@@ -12,6 +12,7 @@
 #include "ui_main.h"
 #include "test/draw_test.h"
 #include "test/triangle_test.h"
+#include "test/version_test.h"
 #include "test/fan_test.h"
 
 using qrcodegen::QrCode;
@@ -138,6 +139,7 @@ UiMain::UiMain()
 
     int count = 0;
     tests_[count++] = new TirangleTest(this, "TriangleTest");
+    tests_[count++] = new VersionTest(this, "Version test");
     tests_[count++] = new FanTest(this, "Fan test");
     for (int i = count; i < kCases; i++) {
         char name[64];
