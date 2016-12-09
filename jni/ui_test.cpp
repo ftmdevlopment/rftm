@@ -11,10 +11,10 @@
 
 #define msleep(n) usleep((n) * 1000)
 
-struct SocpedLock
+struct ScopedLock
 {
-    SocpedLock(pthread_mutex_t* mutex) : mutex_(mutex) { pthread_mutex_lock(mutex_); }
-    ~SocpedLock() { pthread_mutex_unlock(mutex_); }
+    ScopedLock(pthread_mutex_t* mutex) : mutex_(mutex) { pthread_mutex_lock(mutex_); }
+    ~ScopedLock() { pthread_mutex_unlock(mutex_); }
 private:
     pthread_mutex_t* mutex_;
 };
@@ -85,8 +85,6 @@ void UiTest::OnLeave()
 
 void UiTest::RunTest()
 {
-    XLOGI("Running");
-    result("UiTest::RunTest\ndone\n3\n4\n5\n6\n7");
 }
 
 const char* UiTest::state_str() const
@@ -104,25 +102,25 @@ const char* UiTest::state_str() const
 
 int UiTest::state() const
 {
-    SocpedLock _locker(&mutex_);
+    ScopedLock _locker(&mutex_);
     return state_;
 }
 
 void UiTest::state(int s)
 {
-    SocpedLock _locker(&mutex_);
+    ScopedLock _locker(&mutex_);
     state_ = s;
 }
 
 std::string UiTest::result() const
 {
-    SocpedLock _locker(&mutex_);
+    ScopedLock _locker(&mutex_);
     return result_;
 }
 
 void UiTest::result(std::string r)
 {
-    SocpedLock _locker(&mutex_);
+    ScopedLock _locker(&mutex_);
     result_ = r;
 }
 
