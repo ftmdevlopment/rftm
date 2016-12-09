@@ -42,6 +42,7 @@ LOCAL_SRC_FILES := \
     test/fan_test.cpp \
     test/key_test.cpp \
     test/led_test.cpp \
+    test/light_sensor_test.cpp \
 
 LOCAL_CPP_FEATURES := exceptions
 
