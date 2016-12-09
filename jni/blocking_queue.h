@@ -29,9 +29,9 @@ public:
     void put(const T& item)
     {
         {
-            SocpedLock _locker(&mutex_);
+            ScopedLock _locker(&mutex_);
             // wait for a slot
-            while (is_full_locked()) {
+            while (queue_.size() == capacity_) {
                 pthread_cond_wait(&cond_slot_, &mutex_);
             }
 
@@ -45,9 +45,9 @@ public:
     {
         type result;
         {
-            SocpedLock _locker(&mutex_);
+            ScopedLock _locker(&mutex_);
             // wait for an item
-            while (is_empty_locked()) {
+            while (queue_.empty()) {
                 pthread_cond_wait(&cond_item_, &mutex_);
             }
 
@@ -62,10 +62,10 @@ public:
     {
         std::vector<type> result;
         {
-            SocpedLock _locker(&mutex_);
+            ScopedLock _locker(&mutex_);
 
             // wait for an item
-            while (is_empty_locked()) {
+            while (queue_.empty()) {
                 pthread_cond_wait(&cond_item_, &mutex_);
             }
 
@@ -85,7 +85,7 @@ public:
     {
         std::vector<type> result;
         {
-            SocpedLock _locker(&mutex_);
+            ScopedLock _locker(&mutex_);
             result.reserve(queue_.size());
             while (queue_.size() > 0) {
                 result.push_back(queue_.front());
@@ -99,45 +99,39 @@ public:
 
     size_type size() const
     {
-        SocpedLock _locker(&mutex_);
-        return get_size_locked();
+        ScopedLock _locker(&mutex_);
+        return queue_.size();
     }
 
     size_type capacity() const { return capacity_; }
 
     bool full() const
     {
-        SocpedLock _locker(&mutex_);
-        return is_full_locked();
+        ScopedLock _locker(&mutex_);
+        return queue_.size() == capacity_;
     }
 
     bool empty() const
     {
-        SocpedLock _locker(&mutex_);
-        return is_empty_locked();
+        ScopedLock _locker(&mutex_);
+        return queue_.empty();
     }
 
 protected:
-    inline bool is_full_locked() const { return queue_.size() == capacity_; }
-
-    inline bool is_empty_locked() const { return get_size_locked() == 0; }
-
-    inline size_type get_size_locked() const { return queue_.size(); }
-
-    struct SocpedLock
+    struct ScopedLock
     {
-        SocpedLock(pthread_mutex_t* mutex) : mutex_(mutex) { pthread_mutex_lock(mutex_); }
-        ~SocpedLock() { pthread_mutex_unlock(mutex_); }
+        ScopedLock(pthread_mutex_t* mutex) : mutex_(mutex) { pthread_mutex_lock(mutex_); }
+        ~ScopedLock() { pthread_mutex_unlock(mutex_); }
     private:
         pthread_mutex_t* mutex_;
     };
 
 private:
-    size_type       capacity_;
-    std::queue<type> queue_;
+    size_type               capacity_;
+    std::queue<type>        queue_;
     mutable pthread_mutex_t mutex_;
-    pthread_cond_t  cond_item_;
-    pthread_cond_t  cond_slot_;
+    pthread_cond_t          cond_item_;
+    pthread_cond_t          cond_slot_;
 };
 
 
