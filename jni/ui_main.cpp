@@ -17,6 +17,7 @@
 #include "test/key_test.h"
 #include "test/led_test.h"
 #include "test/light_sensor_test.h"
+#include "test/speaker_test.h"
 
 using qrcodegen::QrCode;
 
@@ -147,6 +148,7 @@ UiMain::UiMain()
     tests_[count++] = new KeyTest(this, "Key test");
     tests_[count++] = new LedTest(this, "Led test");
     tests_[count++] = new LightSensorTest(this, "Light sensor test");
+    tests_[count++] = new SpeakerTest(this, "Speaker test");
     for (int i = count; i < kCases; i++) {
         char name[64];
         snprintf(name, sizeof(name), "DrawTest-%d", i);
