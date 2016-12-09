@@ -45,7 +45,7 @@ void KeyTest::OnLeftTouch(int value)
             markL_[i] = '#';
         }
     }
-    result("L: " + markL_ + "\nR: " + markR_);
+    result("L:" + markL_ + "\nR:" + markR_);
 }
 
 void KeyTest::OnRightTouch(int value)
@@ -57,5 +57,5 @@ void KeyTest::OnRightTouch(int value)
             markR_[i] = '#';
         }
     }
-    result("L: " + markL_ + "\nR: " + markR_);
+    result("L:" + markL_ + "\nR:" + markR_);
 }
