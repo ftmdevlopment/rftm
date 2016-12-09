@@ -122,7 +122,6 @@ void UiBase::OnLeave()
 
 void UiBase::OnEvent(int fd, struct input_event* ev, void* data)
 {
-    gr_info("fd: %d, ev: {type: 0x%X, code: 0x%X, value: 0x%X}, data: %p", fd, ev->type, ev->code, ev->value, data);
 }
 
 int UiBase::event_callback(int fd, uint32_t epevents, void *data)
