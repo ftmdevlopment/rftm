@@ -185,11 +185,14 @@ static int __read_write_test__ = []() {
 }();
 #endif
 
-int run_command(const char* cmd, std::string* out)
+int run_command(std::string cmd, std::string* out, bool err2out)
 {
     if (!out) return -1;
 
-    FILE* p = popen(cmd, "r");
+    if (err2out) {
+        cmd += " 2>&1";
+    }
+    FILE* p = popen(cmd.c_str(), "r");
     if (!p) perror("popen");
 
     out->clear();
@@ -198,7 +201,7 @@ int run_command(const char* cmd, std::string* out)
         *out += buffer;
     }
 
-    fclose(p);
+    pclose(p);
     return out->length();
 }
 
