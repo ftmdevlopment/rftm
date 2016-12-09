@@ -5,6 +5,7 @@
 #ifndef RFTM_UTILS_H
 #define RFTM_UTILS_H
 
+#include <vector>
 #include <string>
 #include <algorithm>
 using std::max;
@@ -13,6 +14,8 @@ using std::min;
 int read_file(const char* name, std::string* result, int expected = 0);
 int write_file(const char* name, std::string content);
 bool file_exists(const char* path);
+
+int list_directory(std::vector<std::string>* result, const char* path);
 
 int run_command(std::string cmd, std::string* out, bool err2out = true);
 int split_string(std::string* out, int size, const std::string& in, const char sep = ' ', const int max = 0);

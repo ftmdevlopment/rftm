@@ -3,14 +3,14 @@
 //
 
 #include <unistd.h>
+#include <dirent.h>
 #include <math.h>
 #include <ctype.h>
 #include <string.h>
 
 #include "utils.h"
 #include "minui/minui.h"
-
-#include <memory>
+#include "log.h"
 
 void rotate_with(point_t* result, const point_t* source, const point_t* center, double alpha)
 {
@@ -92,6 +92,30 @@ void fill_text(int x, int y, const char* text, int bold)
 // TODO
 void fill_image(int x, int y, const char* name)
 {
+    int W = gr_fb_width();
+    int H = gr_fb_height();
+
+    gr_surface pic = {0};
+    int ret;
+
+    ret = res_create_display_surface(name, &pic);
+    if (ret < 0) {
+        XLOGI("res_create_display_surface fail: %s", name);
+        ret = res_create_alpha_surface(name, &pic);
+        if (ret < 0) {
+            XLOGI("res_create_alpha_surface fail: %s", name);
+            return;
+        }
+    }
+
+    int w = min(W, pic->width);
+    int h = min(H, pic->height);
+    int sx = max(0, (pic->width - W)/2);
+    int sy = max(0, (pic->height - H)/2);
+    int dx = max(0, (W - pic->width)/2);
+    int dy = max(0, (H - pic->height)/2);
+    gr_blit(pic, sx, sy, w, h, dx, dy);
+    res_free_surface(pic);
 }
 
 // assume that you stand on P1(your head point to z+), face to P2,
@@ -169,6 +193,22 @@ int write_file(const char* name, std::string content)
 bool file_exists(const char* path)
 {
     return access(path, F_OK) == 0;
+}
+
+int list_directory(std::vector<std::string>* result, const char* path)
+{
+    DIR* dp = opendir(path);
+    if (!dp || !result) return -1;
+
+    result->clear();
+    struct dirent* de = NULL;
+    while ((de = readdir(dp)) != NULL) {
+        std::string name = de->d_name;
+        result->push_back(name);
+    }
+
+    closedir(dp);
+    return result->size();
 }
 
 #if 0
