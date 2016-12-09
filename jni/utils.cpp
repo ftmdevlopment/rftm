@@ -2,6 +2,7 @@
 // Created by dev on 16-12-3.
 //
 
+#include <unistd.h>
 #include <math.h>
 #include <ctype.h>
 #include <string.h>
@@ -163,6 +164,11 @@ int write_file(const char* name, std::string content)
     int count = fwrite(&content[0], 1, content.size()+1, stream);
     fclose(stream);
     return count;
+}
+
+bool file_exists(const char* path)
+{
+    return access(path, F_OK) == 0;
 }
 
 #if 0
