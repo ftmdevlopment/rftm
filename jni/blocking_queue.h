@@ -97,6 +97,22 @@ public:
         return result;
     }
 
+    // get one element but non-blocking
+    bool peek(type* result)
+    {
+        {
+            ScopedLock _locker(&mutex_);
+            if (queue_.empty()) {
+                return false;
+            }
+            *result = queue_.front();
+            queue_.pop();
+        }
+        // notify to all producers, new slot available.
+        pthread_cond_signal(&cond_slot_);
+        return true;
+    }
+
     size_type size() const
     {
         ScopedLock _locker(&mutex_);
