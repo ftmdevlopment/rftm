@@ -6,12 +6,11 @@
 
 void DlpTest::Draw()
 {
-    for (;;) {
-        std::string img = images_.take();
-        if (done_) break;
+    std::string img;
+    if (images_.peek(&img)) {
         XLOGI("got %s", img.c_str());
+        gr_color(0, 0, 0, 255); gr_clear();
         fill_image(gr_fb_height()/2, gr_fb_height()/2, img.c_str());
-        gr_flip();
     }
 }
 
@@ -22,14 +21,13 @@ void DlpTest::RunTest()
     list_directory(&vec, dir.c_str());
 
     std::sort(vec.begin(), vec.end());
+    set_alarm(vec.size() * kDiplayTime);
     for (auto& s: vec) {
         if (s.find("dlp_") == 0) {
-            std::string base = s.substr(0, s.size() - 4);
+            std::string base = s.substr(0, s.find_last_of('.'));
             XLOGI("put %s", base.c_str());
             images_.put(base);
-            sleep(2);
+            sleep(kDiplayTime);
         }
     }
-    done_ = true;
-    images_.put("");
 }

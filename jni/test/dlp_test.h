@@ -11,14 +11,14 @@
 class DlpTest : public UiTest
 {
 public:
-    UITEST_ENTRY(DlpTest) { done_ = false; }
+    UITEST_ENTRY(DlpTest) {}
 
 private:
     void Draw();
 
     void RunTest();
 
-    bool done_;
+    static const int kDiplayTime = 2;
     BlockingQueue<std::string> images_;
 };
 
