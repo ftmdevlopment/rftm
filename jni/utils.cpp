@@ -308,3 +308,41 @@ static int __trim_string_test__ = []() {
 }();
 #endif
 
+std::string format_string(const char* fmt, ...)
+{
+    char fixed[1024];
+
+    va_list ap;
+    va_start(ap, fmt);
+
+    va_list ap_bakup;
+    va_copy(ap_bakup, ap);
+    int count = vsnprintf(fixed, sizeof(fixed), fmt, ap_bakup);
+    va_end(ap_bakup);
+
+
+    if (count < (int)sizeof(fixed)) {
+        return fixed;
+    }
+
+    int length = count + 1;
+    char* buff = (char*)malloc(length);
+    va_copy(ap_bakup, ap);
+    vsnprintf(buff, length, fmt, ap_bakup);
+    va_end(ap_bakup);
+
+    va_end(ap);
+
+    std::string result(buff);
+    free(buff);
+    return result;
+}
+
+#if 1
+static int __format_string_test__ = []() {
+    puts("format_string test");
+    puts(format_string("this is a %s", "test").c_str());
+    return 0;
+}();
+#endif
+

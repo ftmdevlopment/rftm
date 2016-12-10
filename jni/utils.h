@@ -20,6 +20,7 @@ int list_directory(std::vector<std::string>* result, const char* path);
 int run_command(std::string cmd, std::string* out, bool err2out = true);
 int split_string(std::string* out, int size, const std::string& in, const char sep = ' ', const int max = 0);
 std::string trim_string(std::string input);
+std::string format_string(const char* __restrict, ...) __printflike(1, 0);
 
 #ifdef __cplusplus
 extern "C" {
