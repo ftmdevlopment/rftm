@@ -45,6 +45,7 @@ LOCAL_SRC_FILES := \
     test/light_sensor_test.cpp \
     test/speaker_test.cpp \
     test/dlp_test.cpp \
+    test/mem_test.cpp \
 
 LOCAL_CPP_FEATURES := exceptions
 
