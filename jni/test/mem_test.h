@@ -14,6 +14,12 @@ public:
 
 private:
     void RunTest();
+
+    void OnKey(int v) {}
+
+    void OnLeftTouch(int v) {}
+
+    void OnRightTouch(int v) {}
 };
 
 
