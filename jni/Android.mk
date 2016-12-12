@@ -50,6 +50,7 @@ LOCAL_SRC_FILES := \
     test/battery_test.cpp \
     test/clear_flash.cpp \
     test/power_off.cpp \
+    test/ftm_exit.cpp \
 
 LOCAL_CPP_FEATURES := exceptions
 

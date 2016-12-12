@@ -24,6 +24,7 @@
 #include "test/battery_test.h"
 #include "test/clear_flash.h"
 #include "test/power_off.h"
+#include "test/ftm_exit.h"
 
 using qrcodegen::QrCode;
 
@@ -160,6 +161,7 @@ UiMain::UiMain()
     tests_[count++] = new WifiTest(this, "WiFi test");
     tests_[count++] = new BatteryTest(this, "Battery test");
     tests_[count++] = new ClearFlash(this, "Clear flash");
+    tests_[count++] = new FtmExit(this, "FTM exit");
     tests_[count++] = new PowerOff(this, "Power off");
     for (int i = count; i < kCases; i++) {
         char name[64];
