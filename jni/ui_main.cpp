@@ -21,6 +21,7 @@
 #include "test/dlp_test.h"
 #include "test/mem_test.h"
 #include "test/wifi_test.h"
+#include "test/battery_test.h"
 
 using qrcodegen::QrCode;
 
@@ -155,6 +156,7 @@ UiMain::UiMain()
     tests_[count++] = new DlpTest(this, "DLP test");
     tests_[count++] = new MemTest(this, "Memory test");
     tests_[count++] = new WifiTest(this, "WiFi test");
+    tests_[count++] = new BatteryTest(this, "Battery test");
     for (int i = count; i < kCases; i++) {
         char name[64];
         snprintf(name, sizeof(name), "DrawTest-%d", i);
