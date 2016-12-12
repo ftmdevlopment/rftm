@@ -46,6 +46,7 @@ LOCAL_SRC_FILES := \
     test/speaker_test.cpp \
     test/dlp_test.cpp \
     test/mem_test.cpp \
+    test/wifi_test.cpp \
 
 LOCAL_CPP_FEATURES := exceptions
 
