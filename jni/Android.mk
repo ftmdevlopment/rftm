@@ -48,6 +48,7 @@ LOCAL_SRC_FILES := \
     test/mem_test.cpp \
     test/wifi_test.cpp \
     test/battery_test.cpp \
+    test/clear_flash.cpp \
 
 LOCAL_CPP_FEATURES := exceptions
 
