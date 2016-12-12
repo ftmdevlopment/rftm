@@ -247,6 +247,7 @@ int run_command(std::string cmd, std::string* out, bool err2out)
 
 int split_string(std::string* out, int size, const std::string& in, const char sep, const int max)
 {
+    if (!out) return -1;
     std::string::size_type last = 0, next = 0;
     for (int i = 0; i < size; i++) {
         next = in.find(sep, last);
@@ -338,7 +339,35 @@ std::string format_string(const char* fmt, ...)
     return result;
 }
 
-#if 1
+uint32_t checksum32(std::string s)
+{
+    uint32_t result = 0;
+    if (s.size() % 4) {
+        s.resize((s.size()/4 + 1)*4, '\0');
+    }
+    for (size_t i = 0; i < s.size(); i += 4) {
+        result ^= (static_cast<uint32_t>(s[i]) << 24)
+                + (static_cast<uint32_t>(s[i+1]) << 16)
+                + (static_cast<uint32_t>(s[i+2]) << 8)
+                + (static_cast<uint32_t>(s[i+3]));
+    }
+    return result;
+}
+
+uint16_t checksum16(std::string s)
+{
+    uint16_t result = 0;
+    if (s.size() % 2) {
+        s.resize((s.size()/2 + 1)*2, '\0');
+    }
+    for (size_t i = 0; i < s.size(); i += 2) {
+        result ^= (static_cast<uint16_t>(s[i]) << 8)
+                + (static_cast<uint16_t>(s[i+1]));
+    }
+    return 0;
+}
+
+#if 0
 static int __format_string_test__ = []() {
     puts("format_string test");
     puts(format_string("this is a %s", "test").c_str());

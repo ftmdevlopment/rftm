@@ -22,6 +22,9 @@ int split_string(std::string* out, int size, const std::string& in, const char s
 std::string trim_string(std::string input);
 std::string format_string(const char* __restrict, ...) __printflike(1, 0);
 
+uint32_t checksum32(std::string s);
+uint16_t checksum16(std::string s);
+
 #ifdef __cplusplus
 extern "C" {
 #endif
