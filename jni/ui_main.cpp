@@ -23,6 +23,7 @@
 #include "test/wifi_test.h"
 #include "test/battery_test.h"
 #include "test/clear_flash.h"
+#include "test/power_off.h"
 
 using qrcodegen::QrCode;
 
@@ -159,6 +160,7 @@ UiMain::UiMain()
     tests_[count++] = new WifiTest(this, "WiFi test");
     tests_[count++] = new BatteryTest(this, "Battery test");
     tests_[count++] = new ClearFlash(this, "Clear flash");
+    tests_[count++] = new PowerOff(this, "Power off");
     for (int i = count; i < kCases; i++) {
         char name[64];
         snprintf(name, sizeof(name), "DrawTest-%d", i);
