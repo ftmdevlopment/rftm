@@ -47,6 +47,10 @@ struct triangle
 };
 typedef struct triangle triangle_t;
 
+struct rectangle {
+    int x, y, w, h;
+};
+typedef struct rectangle rect_t;
 
 struct color
 {
@@ -61,6 +65,7 @@ void fill_image(int x, int y, const char* name);
 void fill_circle(int x0, int y0, int radius);
 void fill_ring(int x0, int y0, int r1, int r2);
 void fill_triangle(const triangle_t* t);
+void fill_rect(const rect_t* rect);
 
 bool in_triangle(const triangle_t* t, int x, int y);
 void rotate_with(point_t* result, const point_t* source, const point_t* center, double alpha);

@@ -157,6 +157,12 @@ void fill_triangle(const triangle_t* t)
     }
 }
 
+void fill_rect(const rect_t* rect)
+{
+    if (!rect) return;
+    gr_fill(rect->x, rect->y, rect->x + rect->w, rect->y + rect->h);
+}
+
 int read_file(const char* name, std::string* result, int expected)
 {
     long size = 0;
