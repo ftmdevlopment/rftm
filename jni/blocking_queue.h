@@ -26,6 +26,22 @@ public:
         pthread_cond_init(&cond_slot_, NULL);
     }
 
+    ~BlockingQueue() {
+        pthread_mutex_destroy(&mutex_);
+        pthread_cond_destroy(&cond_item_);
+        pthread_cond_destroy(&cond_slot_);
+    }
+
+    void reserve(size_t cap) {
+        ScopedLock _locker(&mutex_);
+        capacity_ = cap;
+    }
+
+    void clear() {
+        ScopedLock _locker(&mutex_);
+        queue_.clear();
+    }
+
     void put(const T& item)
     {
         {
@@ -35,7 +51,7 @@ public:
                 pthread_cond_wait(&cond_slot_, &mutex_);
             }
 
-            queue_.push(item);
+            queue_.push_back(item);
         }
         // notify to a consumer, new item arrived.
         pthread_cond_signal(&cond_item_);
@@ -51,7 +67,8 @@ public:
                 pthread_cond_wait(&cond_item_, &mutex_);
             }
 
-            result = queue_.front(); queue_.pop();
+            result = queue_.front();
+            queue_.pop_front();
         }
         // notify to a producer, new slot available.
         pthread_cond_signal(&cond_slot_);
@@ -72,7 +89,7 @@ public:
             result.reserve(queue_.size());
             while (queue_.size() > 0) {
                 result.push_back(queue_.front());
-                queue_.pop();
+                queue_.pop_front();
             }
         }
         // notify to all producers, new slot available.
@@ -89,7 +106,7 @@ public:
             result.reserve(queue_.size());
             while (queue_.size() > 0) {
                 result.push_back(queue_.front());
-                queue_.pop();
+                queue_.pop_front();
             }
         }
         // notify to all producers, new slot available.
@@ -106,7 +123,7 @@ public:
                 return false;
             }
             *result = queue_.front();
-            queue_.pop();
+            queue_.pop_front();
         }
         // notify to all producers, new slot available.
         pthread_cond_signal(&cond_slot_);
@@ -144,7 +161,7 @@ protected:
 
 private:
     size_type               capacity_;
-    std::queue<type>        queue_;
+    std::deque<type>        queue_;
     mutable pthread_mutex_t mutex_;
     pthread_cond_t          cond_item_;
     pthread_cond_t          cond_slot_;
