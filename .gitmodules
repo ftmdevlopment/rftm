@@ -7,3 +7,6 @@
 [submodule "jni/zlib"]
 	path = jni/zlib
 	url = git@github.com:ftmdevlopment/zlib.git
+[submodule "jni/tinyalsa"]
+	path = jni/tinyalsa
+	url = git@github.com:ftmdevlopment/tinyalsa.git
