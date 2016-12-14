@@ -10,8 +10,7 @@
 #include "minui/minui.h"
 #include "qrcode/QrCode.hpp"
 #include "ui_main.h"
-#include "test/draw_test.h"
-#include "test/triangle_test.h"
+#include "test/empty_test.h"
 #include "test/version_test.h"
 #include "test/fan_test.h"
 #include "test/key_test.h"
@@ -150,7 +149,6 @@ UiMain::UiMain()
     memset(tests_, 0, sizeof(tests_));
 
     int count = 0;
-    tests_[count++] = new TirangleTest(this, "TriangleTest");
     tests_[count++] = new VersionTest(this, "Version test");
     tests_[count++] = new FanTest(this, "Fan test");
     tests_[count++] = new KeyTest(this, "Key test");
@@ -166,9 +164,7 @@ UiMain::UiMain()
     tests_[count++] = new FtmExit(this, "FTM exit");
     tests_[count++] = new PowerOff(this, "Power off");
     for (int i = count; i < kCases; i++) {
-        char name[64];
-        snprintf(name, sizeof(name), "DrawTest-%d", i);
-        tests_[i] = new DrawTest(this, name);
+        tests_[i] = new EmptyTest(this, "");
     }
 
     printf("border_radius: %d\n", border_radius);
