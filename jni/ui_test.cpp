@@ -47,15 +47,19 @@ void UiTest::OnKey(int value)
 void UiTest::OnLeftTouch(int value)
 {
     XLOGI("%s %d\n", __func__, value);
-    fail();
-    SetCurrentUI(main_);
+    if (value == 0x10 || value == 0x08) {
+        fail();
+        SetCurrentUI(main_);
+    }
 }
 
 void UiTest::OnRightTouch(int value)
 {
     XLOGI("%s %d\n", __func__, value);
-    pass();
-    SetCurrentUI(main_);
+    if (value == 0x10 || value == 0x08) {
+        pass();
+        SetCurrentUI(main_);
+    }
 }
 
 void UiTest::OnAlarm()
