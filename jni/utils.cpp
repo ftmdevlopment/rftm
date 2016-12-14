@@ -370,7 +370,7 @@ uint16_t checksum16(std::string s)
         result ^= (static_cast<uint16_t>(s[i]) << 8)
                 + (static_cast<uint16_t>(s[i+1]));
     }
-    return 0;
+    return result;
 }
 
 #if 0
