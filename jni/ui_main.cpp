@@ -28,6 +28,8 @@
 
 using qrcodegen::QrCode;
 
+static const char* kVersion = "3.0.0";
+
 static const int kResultLineMaxChars = 20;
 
 static const double kFreezeAngle = (80/180.0*M_PI);
@@ -42,7 +44,30 @@ static const int kFontLineDist = 4;
 static const int kQRCellSize = 4;
 static const int kQRBorderWidth = 8;
 
-static const char* kDefaultQrText = "846425A00481,010116000978,0a22,2.1.3,111,212000010000000000,,,00000bf0";
+//static const char* kDefaultQrText = "846425A00481,010116000978,0a22,2.1.3,111,212000010000000000,,,00000bf0";
+static const char* kDefaultSN2 = "012345678901";
+static const char* kDefaultSN3 = "012345678901";
+
+static char state2result(int state)
+{
+    switch (state) {
+        case UiTest::TS_INIT:
+            return '0';
+        case UiTest::TS_FAILED:
+            return '1';
+        case UiTest::TS_PASSED:
+            return '2';
+        default:
+            return '0';
+    }
+}
+
+static std::string get_serial()
+{
+    std::string out;
+    run_command("getprop ro.serialno", &out);
+    return trim_string(out);
+}
 
 void UiMain::draw_main()
 {
@@ -66,7 +91,38 @@ void UiMain::draw_main()
     gr_fill(qrbase_pos_.x, qrbase_pos_.y, qrbase_pos_.x + qrbase_size_, qrbase_pos_.y + qrbase_size_);
     set_color(&qr_fg_color); // foreground
 
-    QrCode qrCode = QrCode::encodeText(qrtext_.c_str(), QrCode::Ecc::LOW);
+    // update qr data
+    std::string test_results;
+    for (int i = 0; i < kCases; i++) {
+        test_results += state2result(tests_[i]->state());
+    }
+    qrdata_.set_results(test_results);
+    qrdata_.update_checksum();
+
+    QrCode qrCode = QrCode::encodeText(qrdata_.to_string().c_str(), QrCode::Ecc::LOW);
+
+    // recalculate qr position
+    qrsize_ = qrCode.size;
+    int size = qrsize_ * kQRCellSize + 2 * kQRBorderWidth;
+    qrbase_size_ = size;
+    static int W = gr_fb_width();
+    static int H = gr_fb_height();
+    qrbase_pos_.x = (W - size)/2;
+    qrbase_pos_.y = (H - size)/2;
+    qrcode_pos_.x = qrbase_pos_.x + kQRBorderWidth;
+    qrcode_pos_.y = qrbase_pos_.y + kQRBorderWidth;
+    int fw, fh;
+    gr_font_size(&fw, &fh);
+    name_pos_.x = W/2;
+    name_pos_.y = qrbase_pos_.y - fh/2 - kFontLineDist;
+    state_pos_.x = W/2;
+    state_pos_.y = qrbase_pos_.y - (fh/2 + fh) - kFontLineDist;
+
+    for (int i = 0; i < kResultLines; i++) {
+        result_pos_[i].x = W/2;
+        result_pos_[i].y = qrbase_pos_.y + size + i*(fh + kFontLineDist) + (fh/2) + kFontLineDist;
+    }
+
     for (int i = 0; i < qrsize_; i++) {
         for (int j = 0; j < qrsize_; j++) {
             if (qrCode.getModule(i, j)) {
@@ -113,8 +169,6 @@ UiMain::UiMain()
         printf("a: %.3f*M_PI, %3.1f ", a/M_PI, a/M_PI*180.0);
         printf("c[%d] = {%d, %d}\n", i, c[i].x, c[i].y);
 
-        t[i].a.x = x0 - arrow_end_radius * sin(a);
-        t[i].a.y = y0 + arrow_end_radius * cos(a);
         rotate_with(&t[i].a, &t0.a, &center, -a);
         rotate_with(&t[i].b, &t0.b, &center, -a);
         rotate_with(&t[i].c, &t0.c, &center, -a);
@@ -122,28 +176,12 @@ UiMain::UiMain()
         case_colors[i] = &case_color;
     }
 
-    QrCode qrDefault(QrCode::encodeText(kDefaultQrText, QrCode::Ecc::LOW));
-    qrsize_ = qrDefault.size;
-    qrtext_ = kDefaultQrText;
-    int size = qrsize_ * kQRCellSize + 2 * kQRBorderWidth;
-    qrbase_size_ = size;
-    qrbase_pos_.x = (W - size)/2;
-    qrbase_pos_.y = (H - size)/2;
-    qrcode_pos_.x = qrbase_pos_.x + kQRBorderWidth;
-    qrcode_pos_.y = qrbase_pos_.y + kQRBorderWidth;
-
-    int fw, fh;
-    gr_font_size(&fw, &fh);
-    name_pos_.x = W/2;
-    name_pos_.y = qrbase_pos_.y - fh/2 - kFontLineDist;
-    state_pos_.x = W/2;
-    state_pos_.y = qrbase_pos_.y - (fh/2 + fh) - kFontLineDist;
-
-    for (int i = 0; i < kResultLines; i++) {
-        result_pos_[i].x = W/2;
-        result_pos_[i].y = qrbase_pos_.y + size + i*(fh + kFontLineDist) + (fh/2) + kFontLineDist;
-    }
-
+    qrdata_ = QrData::Builder::instance()
+            .set_sn1(get_serial())
+            .set_sn2(kDefaultSN2)
+            .set_sn3(kDefaultSN3)
+            .set_version(kVersion)
+            .build();
 
     set_alarm(1);
     memset(tests_, 0, sizeof(tests_));

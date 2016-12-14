@@ -8,6 +8,7 @@
 #include "utils.h"
 #include "ui_base.h"
 #include "ui_test.h"
+#include "qr_data.h"
 
 class UiMain : public UiBase
 {
@@ -67,7 +68,7 @@ private:
     int qrbase_size_;
 
     int qrsize_;
-    std::string qrtext_;
+    QrData qrdata_;
 
     point_t result_pos_[kResultLines];
 

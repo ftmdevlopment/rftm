@@ -33,6 +33,7 @@ LOCAL_SRC_FILES := \
     utils.cpp \
     main.cpp \
     log.cpp \
+    qr_data.cpp \
     qrcode/BitBuffer.cpp \
     qrcode/QrSegment.cpp \
     qrcode/QrCode.cpp \
