@@ -25,6 +25,7 @@
 #include "test/clear_flash.h"
 #include "test/power_off.h"
 #include "test/ftm_exit.h"
+#include "test/mic_test.h"
 
 using qrcodegen::QrCode;
 
@@ -156,6 +157,7 @@ UiMain::UiMain()
     tests_[count++] = new LedTest(this, "Led test");
     tests_[count++] = new LightSensorTest(this, "Light sensor test");
     tests_[count++] = new SpeakerTest(this, "Speaker test");
+    tests_[count++] = new MicTest(this, "Mic test");
     tests_[count++] = new DlpTest(this, "DLP test");
     tests_[count++] = new MemTest(this, "Memory test");
     tests_[count++] = new WifiTest(this, "WiFi test");

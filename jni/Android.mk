@@ -51,15 +51,19 @@ LOCAL_SRC_FILES := \
     test/clear_flash.cpp \
     test/power_off.cpp \
     test/ftm_exit.cpp \
+    test/mic_test.cpp \
 
 LOCAL_CPP_FEATURES := exceptions
 
 LOCAL_STATIC_LIBRARIES := \
+    libtinyalsa \
     libminui \
     libpng \
     libz \
     libstdc++ \
     libc
+
+LOCAL_C_INCLUDES:= $(C_ROOT)/tinyalsa/include
 
 LOCAL_LDLIBS    := -llog
 
@@ -69,6 +73,7 @@ include $(BUILD_EXECUTABLE)
 include $(LOCAL_PATH)/minui/Android.mk \
     $(LOCAL_PATH)/libpng/Android.mk \
     $(LOCAL_PATH)/zlib/Android.mk \
+    $(LOCAL_PATH)/tinyalsa/Android.mk \
 
 ifeq ($(TARGET_USE_ADF),true)
     $(LOCAL_PATH)/adf/Android.mk
