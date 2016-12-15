@@ -53,6 +53,7 @@ LOCAL_SRC_FILES := \
     test/power_off.cpp \
     test/ftm_exit.cpp \
     test/mic_test.cpp \
+    test/camera_test.cpp \
 
 LOCAL_CPP_FEATURES := exceptions
 
