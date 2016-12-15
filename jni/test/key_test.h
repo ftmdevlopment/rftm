@@ -23,9 +23,17 @@ private:
 
     void OnRightTouch(int value);
 
+    void OnAlarm();
+
     bool check();
 
+    void update_reult();
+
+private:
+    static const int kTestSeconds = 20;
     static const int kValues = 8;
+
+    int time_left_;
     std::string markL_;
     std::string markR_;
 };

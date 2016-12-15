@@ -9,6 +9,8 @@ void KeyTest::OnEnter()
     UiTest::OnEnter();
     markL_ = std::string(kValues, ' ');
     markR_ = std::string(kValues, ' ');
+    time_left_ = kTestSeconds;
+    set_alarm(1);
 }
 
 void KeyTest::OnLeave()
@@ -45,7 +47,7 @@ void KeyTest::OnLeftTouch(int value)
             markL_[i] = '#';
         }
     }
-    result("L:" + markL_ + "\nR:" + markR_);
+    update_reult();
 }
 
 void KeyTest::OnRightTouch(int value)
@@ -57,5 +59,23 @@ void KeyTest::OnRightTouch(int value)
             markR_[i] = '#';
         }
     }
-    result("L:" + markL_ + "\nR:" + markR_);
+    update_reult();
+}
+
+void KeyTest::update_reult()
+{
+    result("L:" + markL_ + "\n"
+           + "R:" + markR_ + "\n"
+           + format_string("time left: %ds", time_left_));
+}
+
+void KeyTest::OnAlarm()
+{
+    if (time_left_ > 0) {
+        time_left_--;
+        set_alarm(1);
+        update_reult();
+    } else {
+        UiTest::OnAlarm();
+    }
 }
