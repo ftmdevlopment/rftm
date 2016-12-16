@@ -12,7 +12,7 @@
 std::string QrData::to_string()
 {
     std::stringstream ss;
-    ss << sn1_ << "," << sn2_ << "," << sn3_ << "," << sn3sum_ << ","
+    ss << sn1_ << "," << sn2_ << "," << sn3sum_ << ","
        << version_ << "," << sn_check_ << "," << results_ << ","
        << index_ << "," << data_ << "," << checksum_;
     return ss.str();
