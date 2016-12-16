@@ -7,6 +7,7 @@
 
 #include "log.h"
 #include "utils.h"
+#include "common.h"
 #include "minui/minui.h"
 #include "qrcode/QrCode.hpp"
 #include "ui_main.h"
@@ -29,7 +30,7 @@
 
 using qrcodegen::QrCode;
 
-static const char* kVersion = "3.0.0";
+static const char* kVersion = FTM_VERSION;
 
 static const int kResultLineMaxChars = 20;
 

@@ -10,6 +10,7 @@
 
 #include "log.h"
 #include "utils.h"
+#include "common.h"
 #include "ui_base.h"
 #include "minui/minui.h"
 
