@@ -48,12 +48,16 @@ struct Frame
     Frame(char* buffer, unsigned size)
     {
         // PCM_FORMAT_S32_LE
-        int32_t* raw = reinterpret_cast<value_type*>(buffer);
-        size_t count = size / (sizeof(value_type) / sizeof(decltype(buffer[0])));
+        const size_t N = (sizeof(value_type) / sizeof(decltype(buffer[0])));
+        size_t count = size / N;
         assert(count == config.channels);
         values_.resize(count);
         for (size_t i = 0; i < count; i++) {
-            values_[i] = raw[i];
+            // Little Endian: least significant byte in the smallest address.
+            values_[i] = (static_cast<uint32_t>(buffer[i*N]))
+                         + (static_cast<uint32_t>(buffer[i*N + 1]) << 8)
+                         + (static_cast<uint32_t>(buffer[i*N + 2]) << 16)
+                         + (static_cast<uint32_t>(buffer[i*N + 3]) << 24);
         }
     }
 
