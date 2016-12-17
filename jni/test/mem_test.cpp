@@ -4,12 +4,35 @@
 
 #include "mem_test.h"
 
+static const int MEGA = 1024 * 1024;
+static const int PAGE = 4096;
+
+class Timer
+{
+public:
+    Timer() { reset(); }
+
+    double elapsed() {
+        clock_gettime(CLOCK_REALTIME, &ts_end_);
+        return tstod(&ts_end_) - tstod(&ts_start_);
+    }
+
+    void reset() {
+        clock_gettime(CLOCK_REALTIME, &ts_start_);
+    }
+private:
+    static double tstod(struct timespec* ts) {
+        return ts->tv_sec + ts->tv_nsec/1e9;
+    }
+
+    struct timespec ts_start_;
+    struct timespec ts_end_;
+};
+
 void MemTest::RunTest()
 {
     uint8_t* ptr = NULL;
-    const int MEGA = 1024 * 1024;
-    const int PAGE = 4096;
-    clock_t start, end;
+    Timer timer;
     std::vector<uint8_t> buffer;
 
     std::string out;
@@ -24,7 +47,6 @@ void MemTest::RunTest()
         goto FAILURE;
     }
     XLOGI("total: %u, used: %u, free: %u", total, used, free);
-    result(format_string("Total %uM\nFree: %uM", total, free));
 
     count = avail * 8 / 10 * MEGA;
     for (int i = 0; i < 5; i++) {
@@ -45,13 +67,12 @@ void MemTest::RunTest()
     for (size_t i = 0; i < buffer.size(); i++) {
         buffer[i] = 0;
     }
-    start = clock();
+    timer.reset();
     for (size_t i = 0; i < count; i += buffer.size()) {
         buffer[i / PAGE % PAGE] &= 0;
         memcpy(ptr + i, &buffer[0], buffer.size());
     }
-    end = clock();
-    result("set to 0 done\n" + format_string("use %d ms", end - start));
+    result("set to 0 done\n" + format_string("use %.6fs", timer.elapsed()));
     sleep(1);
 
     result("set to random");
@@ -59,21 +80,24 @@ void MemTest::RunTest()
     for (size_t i = 0; i < buffer.size(); i++) {
         buffer[i] = static_cast<uint8_t>(rand());
     }
-    start = clock();
+    timer.reset();
     for (size_t i = 0; i < count; i += buffer.size()) {
         buffer[i / PAGE % PAGE] ^= i;
         memcpy(ptr + i, &buffer[0], buffer.size());
     }
-    end = clock();
-    result("set to random done\n" + format_string("use %d ms", end - start));
+    result("set to random done\n" + format_string("use %.6fs", timer.elapsed()));
     sleep(1);
 
     free(ptr);
+
+    result(format_string("Memory: %uM\nPASS", total));
+
     pass();
     set_alarm_ms(1);
     return;
 
 FAILURE:
+    result("FAIL");
     fail();
     set_alarm_ms(1);
 }
