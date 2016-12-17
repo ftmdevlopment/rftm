@@ -32,10 +32,6 @@ public:
         TS_FAILED,
     };
 
-    void start();
-
-    void wait();
-
     const char* name() const { return name_; }
     const char* state_str() const;
     int state() const;
@@ -60,6 +56,11 @@ protected:
     virtual void RunTest();
     inline void pass() { state(TS_PASSED); }
     inline void fail() { state(TS_FAILED); }
+
+    void start();
+    void wait();
+
+    void back();
 
 private:
     static void* do_test(void*);

@@ -49,7 +49,7 @@ void UiTest::OnLeftTouch(int value)
     XLOGI("%s %d\n", __func__, value);
     if (value == 0x10 || value == 0x08) {
         fail();
-        SetCurrentUI(main_);
+        back();
     }
 }
 
@@ -58,19 +58,19 @@ void UiTest::OnRightTouch(int value)
     XLOGI("%s %d\n", __func__, value);
     if (value == 0x10 || value == 0x08) {
         pass();
-        SetCurrentUI(main_);
+        back();
     }
 }
 
 void UiTest::OnAlarm()
 {
     XLOGI("alarm");
-    UiBase::SetCurrentUI(main_);
+    back();
 }
 
 void UiTest::OnEnter()
 {
-    set_alarm(10);
+    set_alarm(60);
     XLOGI("enter %p start test", this);
     state(TS_TESTING);
     result("");
@@ -145,4 +145,9 @@ void UiTest::wait()
 {
     pthread_join(worker_, NULL);
     done_ = true;
+}
+
+void UiTest::back()
+{
+    SetCurrentUI(main_);
 }
