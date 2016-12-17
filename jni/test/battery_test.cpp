@@ -4,60 +4,67 @@
 
 #include "battery_test.h"
 
-#define BATTERY_PRESENT 	"/sys/class/power_supply/battery/present"
-#define CHARGER_ONLINE 	"/sys/class/power_supply/ac/online"
-#define VOLTAGE_PATH 	"/sys/class/power_supply/battery/voltage_now"
-#define CAPACITY_PATH 	"/sys/class/power_supply/battery/capacity"
+#define BATTERY_PRESENT "/sys/class/power_supply/battery/present"
+#define CHARGER_ONLINE    "/sys/class/power_supply/ac/online"
+#define VOLTAGE_PATH    "/sys/class/power_supply/battery/voltage_now"
+#define CURRENT_PATH    "/sys/class/power_supply/battery/current_now"
+#define CAPACITY_PATH   "/sys/class/power_supply/battery/capacity"
 
 void BatteryTest::RunTest()
 {
-    std::string out;
-    bool charger_online = false;
-    bool battery_present = false;
-    int battery_voltage = 0;
-    int battery_capacity = 0;
-    bool success = false;
+    wait_for_judge_result();
+    set_alarm_ms(1);
+    clear_judge_result();
+}
 
-#define READ(path) \
-    if (read_file(path, &out, 1024) < 0) { \
-        XLOGE("read %s failed, %s", path, strerror(errno)); \
-        goto FAILURE; \
-    }
+void BatteryTest::Draw()
+{
+    if (timer_.elapsed() - last_time_ > kSampleTime) {
+        std::string out;
+        bool charger_online = false;
+        bool battery_present = false;
+        int battery_voltage = 0;
+        int battery_capacity = 0;
+        int battery_current = 0;
 
-    for (int i = 0; i < 40; i++) {
-        READ(BATTERY_PRESENT);
+#define CAT(path) \
+        do { \
+            if (run_command(format_string("cat %s", path), &out) < 0) { \
+                XLOGE("read %s failed, %s", path, strerror(errno)); \
+                return; \
+            } \
+        } while (0)
+
+        CAT(BATTERY_PRESENT);
         battery_present = ::atoi(out.c_str()) > 0;
 
-        READ(CAPACITY_PATH);
-        battery_capacity = ::atoi(out.c_str());
-
-        READ(VOLTAGE_PATH);
-        battery_voltage = ::atoi(out.c_str());
-
-        READ(CHARGER_ONLINE);
+        CAT(CHARGER_ONLINE);
         charger_online = ::atoi(out.c_str()) > 0;
 
-        result(format_string("charger: %s\n"
-                             "battery: %s\n"
-                             "voltage: % 2d     \n"
-                             "capacity:% 2d     ",
-                             charger_online ?  "online " : "offline",
+        CAT(CAPACITY_PATH);
+        battery_capacity = ::atoi(out.c_str());
+
+        CAT(VOLTAGE_PATH);
+        battery_voltage = ::atoi(out.c_str());
+
+        CAT(CURRENT_PATH);
+        battery_current = ::atoi(out.c_str());
+
+#undef CAT
+
+        result(format_string("Charger: %s\n"
+                                     "Battery: %s\n"
+                                     "Voltage: %1.3fV \n"
+//                                     "Current: %1.3fA \n"
+                                     "Capacity: %d%%   ",
+                             charger_online ? "online " : "offline",
                              battery_present ? "present" : "none   ",
-                             battery_voltage, battery_capacity));
-        if (battery_present && battery_voltage > 0) {
-            success = true;
-        }
-        usleep(500 * 1000);
+                             battery_voltage / 1e6,
+//                             battery_current / 1e6,
+                             battery_capacity));
+        UiTest::Draw();
+        gr_flip();
+
+        last_time_ = timer_.elapsed();
     }
-
-#undef READ
-
-    if (success) {
-        pass();
-        set_alarm_ms(1);
-    }
-
-FAILURE:
-    fail();
-    set_alarm_ms(1);
 }
