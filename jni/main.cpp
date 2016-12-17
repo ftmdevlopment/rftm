@@ -18,25 +18,25 @@ int main(int argc, char** argv)
     return 0;
 }
 
+static const char* DLP_MODE_PATH = "/sys/class/dlp/dlpc2607/dlp_mode";
+static const char* DLP_ENABLE_PATH = "/sys/class/dlp/dlpc2607/enable";
+static const int kPreferDlpMode = 4;
+
 void dlp_init() {
-    int fd_dlp_mod = open("/sys/class/dlp/dlpc2607/dlp_mode", O_RDWR);
-    if (fd_dlp_mod > 0) {
-        char buf[20];
-        int b = sprintf (buf, "%d\n", 4);
-        write(fd_dlp_mod, "4", b);
-        close(fd_dlp_mod);
-    } else {
-        printf("can not write: /sys/class/dlp/dlpc2607/dlp_mode\n");
+    std::string value;
+    char buffer[20];
+
+    read_file(DLP_MODE_PATH, &value);
+    if (::atoi(value.c_str()) != kPreferDlpMode) {
+        snprintf(buffer, sizeof(buffer), "%d\n", kPreferDlpMode);
+        write_file(DLP_MODE_PATH, buffer);
+        printf("update DLP mode %d, %d\n", ::atoi(value.c_str()), kPreferDlpMode);
     }
 
-    int fd_dlp_enable = open("/sys/class/dlp/dlpc2607/enable", O_RDWR);
-    if (fd_dlp_enable > 0) {
-        char buf[20];
-        int b = sprintf(buf, "%d\n", 1);
-        write(fd_dlp_enable, buf, b);
-        close(fd_dlp_enable);
-    }
-    else {
-        printf("can not write: /sys/class/dlp/dlpc2607/enable\n");
+    read_file(DLP_ENABLE_PATH, &value);
+    if (::atoi(value.c_str()) != 1) {
+        snprintf(buffer, sizeof(buffer), "%d\n", 1);
+        write_file(DLP_ENABLE_PATH, buffer);
+        printf("enable DLP\n");
     }
 };
