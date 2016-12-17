@@ -92,7 +92,7 @@ UiBase::~UiBase()
     --iInstanceCount;
 }
 
-void UiBase::OnKey(int value)
+void UiBase::OnKey(int code, int value)
 {
     XLOGI("value: %d last_frame_cost_: % 6d", value, last_frame_cost_);
 }
@@ -140,7 +140,22 @@ int UiBase::event_callback(int fd, uint32_t epevents, void *data)
 
     UiBase::Event event;
     if (ev.type == EV_KEY) {
-        event.source = UiBase::UI_POWER_KEY;
+        if (strstr(path, "event5")) {
+            event.source = UiBase::UI_POWER_KEY;
+        } else if (strstr(path, "event2")) {
+            event.source = UiBase::UI_TOP_KEY;
+            /**
+             * workaround: on rokid device driver,
+             *  both of the rear key and the top key
+             *  were reported as KEY_POWER to userspace
+             *  so we remark it at here.
+             * */
+            if (ev.code == KEY_POWER) {
+                ev.code = KEY_OK;
+            }
+        } else {
+            XLOGE("unkow key event...");
+        }
     } else if (strstr(path, "event1")) {
         event.source = UiBase::UI_LEFT_TOUCH;
     } else if (strstr(path, "event0")) {
@@ -269,7 +284,8 @@ void UiBase::run()
             pCurrentUi->OnEvent(event.fd, &event.ev, event.data);
             switch (event.source) {
                 case UiBase::UI_POWER_KEY:
-                    pCurrentUi->OnKey(event.value);
+                case UiBase::UI_TOP_KEY:
+                    pCurrentUi->OnKey(event.ev.code, event.value);
                     break;
                 case UiBase::UI_LEFT_TOUCH:
                     pCurrentUi->OnLeftTouch(event.value);

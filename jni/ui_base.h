@@ -32,9 +32,10 @@ public:
     };
 
     // for event source:
-    static const uint16_t UI_POWER_KEY = 1;
-    static const uint16_t UI_LEFT_TOUCH = 2;
-    static const uint16_t UI_RIGHT_TOUCH = 4;
+    static const uint16_t UI_TOP_KEY = 1;
+    static const uint16_t UI_POWER_KEY = 2;
+    static const uint16_t UI_LEFT_TOUCH = 0x100;
+    static const uint16_t UI_RIGHT_TOUCH =0x200;
     static const uint16_t UI_UNKNOW = 0;
 
     // for common settings init:
@@ -51,7 +52,7 @@ public:
 protected:
     virtual void OnEvent(int fd, struct input_event* ev, void* data);
 
-    virtual void OnKey(int value);
+    virtual void OnKey(int code, int value);
 
     virtual void OnLeftTouch(int value);
 
