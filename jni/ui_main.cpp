@@ -190,16 +190,16 @@ UiMain::UiMain()
 
     int count = 0;
     tests_[count++] = new VersionTest(this, "Version test");
-    tests_[count++] = new FanTest(this, "Fan test");
-    tests_[count++] = new KeyTest(this, "Key test");
-    tests_[count++] = new LedTest(this, "Led test");
-    tests_[count++] = new LightSensorTest(this, "Light sensor test");
-    tests_[count++] = new SpeakerTest(this, "Speaker test");
-    tests_[count++] = new MicTest(this, "Mic test");
-    tests_[count++] = new CameraTest(this, "Camera test");
-    tests_[count++] = new DlpTest(this, "DLP test");
     tests_[count++] = new MemTest(this, "Memory test");
     tests_[count++] = new WifiTest(this, "WiFi test");
+    tests_[count++] = new DlpTest(this, "DLP test");
+    tests_[count++] = new LedTest(this, "Led test");
+    tests_[count++] = new CameraTest(this, "Camera test");
+    tests_[count++] = new LightSensorTest(this, "Light sensor test");
+    tests_[count++] = new FanTest(this, "Fan test");
+    tests_[count++] = new KeyTest(this, "Key test");
+    tests_[count++] = new SpeakerTest(this, "Speaker test");
+    tests_[count++] = new MicTest(this, "Mic test");
     tests_[count++] = new BatteryTest(this, "Battery test");
     tests_[count++] = new ClearFlash(this, "Clear flash");
     tests_[count++] = new FtmExit(this, "FTM exit");
@@ -287,7 +287,7 @@ void UiMain::OnRightTouch(int value)
     XLOGI("focus: %d", focus_case_id);
 }
 
-void UiMain::OnKey(int value)
+void UiMain::OnKey(int code, int value)
 {
     XLOGI("switch to test %d\n", focus_case_id);
     UiBase::SetCurrentUI(tests_[focus_case_id]);

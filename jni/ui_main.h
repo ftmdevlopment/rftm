@@ -24,7 +24,7 @@ protected:
 
     void Draw();
 
-    void OnKey(int value);
+    void OnKey(int code, int value);
 
     void OnLeftTouch(int value);
 
