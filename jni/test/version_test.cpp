@@ -10,7 +10,10 @@ static const std::string kXmosPID = "0008";
 
 std::string get_xmos_version()
 {
-    std::string result;
+    static std::string result;
+    if (result.size() > 0) { // cache last result
+        return result;
+    }
 
     const std::string base = "/sys/bus/usb/devices/";
     DIR* dptr = opendir(base.c_str());

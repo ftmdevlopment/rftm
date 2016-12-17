@@ -4,9 +4,13 @@
 
 #include "speaker_test.h"
 
+#ifdef RESOURCE_PATH
+std::string left_sound = RESOURCE_PATH "left_test.wav";
+std::string right_sound = RESOURCE_PATH "right_test.wav";
+#else  // RESOURCE_PATH
 std::string left_sound = "/data/local/tmp/left_test.wav";
-
 std::string right_sound = "/data/local/tmp/right_test.wav";
+#endif  // RESOURCE_PATH
 
 void SpeakerTest::RunTest()
 {
@@ -48,7 +52,9 @@ void SpeakerTest::RunTest()
     }
 
     result("PASS/FAIL?");
-    sleep(3);
+    wait_for_judge_result();
+    set_alarm_ms(1);
+    clear_judge_result();
     return;
 
 FAIL:

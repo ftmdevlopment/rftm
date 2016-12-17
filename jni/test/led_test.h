@@ -6,11 +6,12 @@
 #define RFTM_LED_TEST_H
 
 #include "../ui_test.h"
+#include "../blocking_queue.h"
 
-class LedTest : public UiTest
+class LedTest : public UiUserJudgeTest
 {
 public:
-    UITEST_ENTRY(LedTest) {}
+    USER_JUDGE_TEST_ENTRY(LedTest) {}
 
 private:
     void RunTest();

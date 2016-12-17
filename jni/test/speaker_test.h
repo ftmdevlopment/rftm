@@ -6,11 +6,12 @@
 #define RFTM_SPEAKER_TEST_H
 
 #include "../ui_test.h"
+#include "../blocking_queue.h"
 
-class SpeakerTest : public UiTest
+class SpeakerTest : public UiUserJudgeTest
 {
 public:
-    UITEST_ENTRY(SpeakerTest) {}
+    USER_JUDGE_TEST_ENTRY(SpeakerTest) {}
 
 private:
     void RunTest();

@@ -20,6 +20,19 @@ static bool get_wlan0_state(std::string* state)
     return false;
 }
 
+static bool get_wlan0_mac(std::string* mac)
+{
+    std::string out;
+    if (!mac) return false;
+    run_command("ifconfig wlan0", &out);
+    if (out.find("HWaddr") < out.size()) {
+        *mac = out.substr(out.find("HWaddr") + sizeof("HWaddr ")-1, sizeof("38:BC:1A:5B:CA:0C")-1);
+        return true;
+    }
+    XLOGI("get wlan0 state failed!");
+    return false;
+}
+
 struct ScanResult
 {
     int level;
@@ -76,7 +89,8 @@ static std::string pick_n_ssid(const std::vector<ScanResult>& ap_list, int npick
     std::string result;
     npick = min(static_cast<int>(ap_list.size()), npick);
     for (int i = 0; i < npick; i++) {
-        result += ap_list[i].SSID + "\n";
+        result += ap_list[i].SSID + " "
+                  + format_string("%d", ap_list[i].level) + "\n";
     }
     return result;
 }
@@ -126,7 +140,10 @@ void WifiTest::RunTest()
         std::sort(ap_list.begin(), ap_list.end(), [](const ScanResult& a, const ScanResult& b) {
             return a.level > b.level;
         });
-        result(pick_n_ssid(ap_list, 3));
+
+        std::string MAC;
+        get_wlan0_mac(&MAC);
+        result("[" + MAC + "]\n" + pick_n_ssid(ap_list, 3));
         pass();
     } else {
         fail();
@@ -134,4 +151,5 @@ void WifiTest::RunTest()
     sleep(3);
 
     wifi_down();
+    set_alarm_ms(1);
 }

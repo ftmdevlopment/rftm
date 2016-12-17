@@ -15,7 +15,7 @@ public:
 private:
     void RunTest();
 
-    void OnKey(int v) {}
+    void OnKey(int c, int v) {}
 
     void OnLeftTouch(int v) {}
 

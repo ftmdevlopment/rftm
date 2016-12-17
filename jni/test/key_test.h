@@ -17,7 +17,7 @@ private:
 
     void OnLeave();
 
-    void OnKey(int value);
+    void OnKey(int code, int value);
 
     void OnLeftTouch(int value);
 
@@ -27,15 +27,17 @@ private:
 
     bool check();
 
-    void update_reult();
+    void update_and_check_result();
 
 private:
-    static const int kTestSeconds = 20;
+    static const int kTestSeconds = 30;
     static const int kValues = 8;
 
-    int time_left_;
-    std::string markL_;
-    std::string markR_;
+    std::string left_;
+    std::string right_;
+    char top_;
+    char rear_;
+    int time_left_;  // for some key FAILED
 };
 
 

@@ -6,31 +6,31 @@
 
 void FanTest::RunTest()
 {
-    int cpu_temp = 0, cpu_temp2 = 0;
-    char buffer[64];
-    std::string str_temp;
-
-    if (read_file("/sys/class/thermal/thermal_zone1/temp", &str_temp) > 0) {
-        sscanf(str_temp.c_str(), "%d", &cpu_temp);
-        sprintf(buffer, "CPU Temp: %d.%d ^C", cpu_temp/1000, cpu_temp%1000);
-        result(buffer);
-        XLOGI("temp: %s, %s\n", str_temp.c_str(), buffer);
-    }
     sleep(1);
 
-    result("turn on fan...\n5s");
+    result("turn down fan...");
+    write_file("/sys/class/fan/fan_duty/duty", "0");
+
+    timer_.reset();
+    last_time_ = timer_.elapsed() + 5.0;
+    sleep(5);
+
+    result("turn on fan...");
     write_file("/sys/class/fan/fan_duty/duty", "100");
 
-    sleep(5);
-    if (read_file("/sys/class/thermal/thermal_zone1/temp", &str_temp) > 0) {
-        sscanf(str_temp.c_str(), "%d", &cpu_temp2);
-        sprintf(buffer, "CPU Temp: %d.%d ^C", cpu_temp2/1000, cpu_temp2%1000);
-        result(buffer);
-        XLOGI("%s\n", buffer);
+    wait_for_judge_result();
+    set_alarm_ms(1);
+    clear_judge_result();
+}
+
+void FanTest::Draw()
+{
+    std::string temp;
+    if (timer_.elapsed() - last_time_ > kTempSampleTime
+        && read_file("/sys/class/thermal/thermal_zone1/temp", &temp) > 0) {
+        int cpu_temp = ::atoi(temp.c_str());
+        result(format_string("CPU Temp: %d.%d ^C\nplease check fan", cpu_temp/1000, cpu_temp%1000));
+        last_time_ = timer_.elapsed();
     }
-    sleep(1);
-
-    if (cpu_temp2 < cpu_temp) pass();
-
-    write_file("/sys/class/fan/fan_duty/duty", "0");
+    UiTest::Draw();
 }

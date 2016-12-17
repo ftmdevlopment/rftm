@@ -13,6 +13,18 @@ public:
     UITEST_ENTRY(EmptyTest) {}
 
 private:
+
+    void Draw() { UiTest::Draw(); }
+
+    void OnEnter() {}
+
+    void OnLeave() {}
+
+    void OnKey(int code, int value) { back(); }
+
+    void OnLeftTouch(int value) { back(); }
+
+    void OnRightTouch(int value) { back(); }
 };
 
 

@@ -19,6 +19,7 @@ C_ROOT := $(LOCAL_PATH)
 TARGET_USE_ADF := false
 TARGET_USE_DOUBLE_BUFFER := false
 TARGET_RECOVERY_PIXEL_FORMAT := BGRA_8888
+TARGET_RESOURCE_PATH := /system/ftmres/
 
 include $(CLEAR_VARS)
 
@@ -26,6 +27,8 @@ LOCAL_MODULE := rftm
 LOCAL_FORCE_STATIC_EXECUTABLE := true
 LOCAL_MODULE_TAGS := tests
 LOCAL_CFLAGS += -Wall -std=c++11
+LOCAL_CFLAGS +=  -g
+LOCAL_CFLAGS += -DRESOURCE_PATH=\"${TARGET_RESOURCE_PATH}\"
 LOCAL_SRC_FILES := \
     ui_base.cpp \
     ui_main.cpp \
@@ -65,7 +68,7 @@ LOCAL_STATIC_LIBRARIES := \
     libstdc++ \
     libc
 
-LOCAL_C_INCLUDES:= $(C_ROOT)/tinyalsa/include
+LOCAL_C_INCLUDES:= $(LOCAL_PATH)/tinyalsa/include
 
 LOCAL_LDLIBS    := -llog
 
