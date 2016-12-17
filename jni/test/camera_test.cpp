@@ -57,6 +57,10 @@ void CameraTest::RunTest()
         return;
     }
 
+    gr_color(0, 0, 0, 0xff);
+    gr_clear();
+    gr_flip();
+
     // start background test process
     pid = fork_and_execve((char**) kCameraTestArgs, environ);
     if (pid == -1) {
@@ -64,9 +68,14 @@ void CameraTest::RunTest()
         fail();
         return;
     }
+    XLOGI("%s start as %d.", kCameraTestBin, pid);
 
     // wait for user judge
-    done_.take();
+    set_alarm(0);
+    sleep(2);
+    XLOGI("wait for user judge...");
+    wait_for_judge_result();
+    XLOGI("got user judge...");
 
     // kill background test process
     kill(pid, SIGKILL);
@@ -83,19 +92,7 @@ void CameraTest::RunTest()
     if (WCOREDUMP(status)) {
         XLOGI("child %d core dumped!", child);
     }
-
-
-}
-
-void CameraTest::OnLeftTouch(int value)
-{
-    UiTest::OnLeftTouch(value);
-    done_.put(true);
-}
-
-void CameraTest::OnRightTouch(int value)
-{
-    UiTest::OnRightTouch(value);
-    done_.put(true);
+    set_alarm_ms(1);
+    clear_judge_result();
 }
 

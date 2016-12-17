@@ -8,22 +8,15 @@
 #include "../ui_test.h"
 #include "../blocking_queue.h"
 
-class CameraTest : public UiTest
+class CameraTest : public UiUserJudgeTest
 {
 public:
-    UITEST_ENTRY(CameraTest) {}
+    USER_JUDGE_TEST_ENTRY(CameraTest) {}
 
 private:
     void Draw() {}
 
-    void OnLeftTouch(int value);
-
-    void OnRightTouch(int value);
-
     void RunTest();
-
-private:
-    BlockingQueue<bool> done_;
 };
 
 
