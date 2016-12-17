@@ -37,10 +37,12 @@ static UiBase *pLeaveUi = NULL;
 static UiBase *pEnterUi = NULL;
 static UiBase *pCurrentUi = NULL;
 
+void dlp_init();
 struct GlobalConext
 {
     GlobalConext()
     {
+        dlp_init();
         gr_init();
         ev_init(UiBase::event_callback, NULL);
     }
