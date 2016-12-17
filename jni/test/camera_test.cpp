@@ -51,22 +51,22 @@ void CameraTest::RunTest()
     int status = 0;
     std::string out;
 
-    run_command(format_string("ls -l %s", kCameraTestBin), &out);
-    if (out.find("No such file") != out.npos) {
-        result(format_string("%s", out.c_str()));
-        goto FAIL;
+    if (!file_exists(kCameraTestBin)) {
+        result(format_string("%s not exists!", kCameraTestBin));
+        fail();
+        return;
     }
 
     // start background test process
     pid = fork_and_execve((char**) kCameraTestArgs, environ);
     if (pid == -1) {
         result(format_string("fork fail"));
-        goto FAIL;
+        fail();
+        return;
     }
 
-    // delay
-    set_alarm(10);
-    sleep(10);
+    // wait for user judge
+    done_.take();
 
     // kill background test process
     kill(pid, SIGKILL);
@@ -84,9 +84,18 @@ void CameraTest::RunTest()
         XLOGI("child %d core dumped!", child);
     }
 
-    pass();
-    return;
 
-FAIL:
-    fail();
 }
+
+void CameraTest::OnLeftTouch(int value)
+{
+    UiTest::OnLeftTouch(value);
+    done_.put(true);
+}
+
+void CameraTest::OnRightTouch(int value)
+{
+    UiTest::OnRightTouch(value);
+    done_.put(true);
+}
+
