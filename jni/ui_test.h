@@ -13,6 +13,7 @@
 #include "common.h"
 #include "ui_base.h"
 #include "minui/minui.h"
+#include "blocking_queue.h"
 
 class UiTest : public UiBase
 {
@@ -41,11 +42,14 @@ public:
 protected:
     void Draw();
 
-    void OnKey(int value);
+    void OnKey(int code, int value);
 
     void OnLeftTouch(int value);
 
     void OnRightTouch(int value);
+
+    bool in_left_filer(int value);
+    bool in_right_filter(int value);
 
     void OnAlarm();
 
@@ -76,5 +80,25 @@ private:
 
 #define UITEST_ENTRY(Class) \
     Class(UiBase* main, const char* name) : UiTest(main, name)
+
+class UiUserJudgeTest : public UiTest
+{
+protected:
+    UiUserJudgeTest(UiBase* main, const char* name);
+
+    void clear_judge_result();
+
+    bool wait_for_judge_result();
+
+    void OnLeftTouch(int value);
+
+    void OnRightTouch(int value);
+
+private:
+    BlockingQueue<bool> judge_result_;
+};
+
+#define USER_JUDGE_TEST_ENTRY(Class) \
+    Class(UiBase* main, const char* name) : UiUserJudgeTest(main, name)
 
 #endif // RFTM_UI_TEST_H

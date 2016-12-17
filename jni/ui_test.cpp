@@ -38,28 +38,26 @@ void UiTest::Draw()
     if (main_) main_->Draw();
 }
 
-void UiTest::OnKey(int value)
+void UiTest::OnKey(int code, int value)
 {
-    XLOGI("%s %d main: %p\n", __func__, value, main_);
+    XLOGI("%s %d %d main: %p\n", __func__, code, value, main_);
 //    UiBase::SetCurrentUI(main_);
 }
 
 void UiTest::OnLeftTouch(int value)
 {
+    if (in_left_filer(value)) return;
     XLOGI("%s %d\n", __func__, value);
-    if (value == 0x10 || value == 0x08) {
-        fail();
-        back();
-    }
+    fail();
+    back();
 }
 
 void UiTest::OnRightTouch(int value)
 {
+    if (in_right_filter(value)) return;
     XLOGI("%s %d\n", __func__, value);
-    if (value == 0x10 || value == 0x08) {
-        pass();
-        back();
-    }
+    pass();
+    back();
 }
 
 void UiTest::OnAlarm()
@@ -151,3 +149,44 @@ void UiTest::back()
 {
     SetCurrentUI(main_);
 }
+
+bool UiTest::in_left_filer(int value)
+{
+    return value != 0x10 && value != 0x08;
+}
+
+bool UiTest::in_right_filter(int value)
+{
+    return value != 0x10 && value != 0x08;
+}
+
+void UiUserJudgeTest::clear_judge_result()
+{
+    judge_result_.clear();
+}
+
+bool UiUserJudgeTest::wait_for_judge_result()
+{
+    return judge_result_.take();
+}
+
+void UiUserJudgeTest::OnLeftTouch(int value)
+{
+    if (in_left_filer(value)) return;
+    UiTest::OnLeftTouch(value);
+    judge_result_.put(true);
+}
+
+void UiUserJudgeTest::OnRightTouch(int value)
+{
+    if (in_right_filter(value)) return;
+    UiTest::OnRightTouch(value);
+    judge_result_.put(false);
+}
+
+UiUserJudgeTest::UiUserJudgeTest(UiBase* main, const char* name)
+        : UiTest(main, name)
+{
+}
+
+
