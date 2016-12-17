@@ -294,4 +294,5 @@ void MicTest::Draw()
         }
         sample_count++;
     }
+    gr_flip();
 }

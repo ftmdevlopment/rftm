@@ -24,4 +24,6 @@ void DrawTest::Draw()
     gr_color(   0,   0, 255, 255); gr_fill( xc, yc, xc+W/2, yc+H/2);
     gr_color(   0,   0,   0, 255);
     fill_text(W/2, H/2, name(), 1);
+
+    gr_flip();
 }

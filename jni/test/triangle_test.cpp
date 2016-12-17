@@ -24,5 +24,7 @@ void TirangleTest::Draw()
 
     gr_color( 0xff, 0x00, 0x00, 0xff);
     fill_triangle(&triangle_);
+
+    gr_flip();
 }
 

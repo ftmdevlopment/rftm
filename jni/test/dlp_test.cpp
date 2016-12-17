@@ -30,4 +30,6 @@ void DlpTest::RunTest()
             sleep(kDiplayTime);
         }
     }
+
+    gr_flip();
 }

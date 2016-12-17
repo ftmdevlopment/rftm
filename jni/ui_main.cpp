@@ -271,6 +271,8 @@ void UiMain::Draw()
     // arrow
     set_color(&arrow_color);
     fill_triangle(&arrow_places[focus_case_id]);
+
+    gr_flip();
 }
 
 void UiMain::OnLeftTouch(int value)
