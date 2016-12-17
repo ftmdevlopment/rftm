@@ -8,19 +8,29 @@
 #include "../ui_test.h"
 #include "../blocking_queue.h"
 
-class DlpTest : public UiTest
+class DlpTest : public UiUserJudgeTest
 {
 public:
-    UITEST_ENTRY(DlpTest) {}
+    USER_JUDGE_TEST_ENTRY(DlpTest) {}
 
 private:
     void Draw();
 
+    void OnKey(int code, int value);
+
     void RunTest();
 
+    void scan_images();
+
+    void next_image();
+
     static const int kDiplayTime = 2;
-    BlockingQueue<std::string> images_;
+    BlockingQueue<std::string> show_;
+    std::vector<std::string> images_;
+    int current_displayed_;
+    pthread_mutex_t mutex_;
 };
+
 
 
 #endif //RFTM_DLP_TEST_H
