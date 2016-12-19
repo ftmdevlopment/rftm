@@ -68,6 +68,7 @@ protected:
 
     long last_frame_cost_; // last frame time consumption in microsecond(us).
 
+    double get_last_alarm_ts();
 private:
     static bool s_ignore_release;
     static bool s_running;

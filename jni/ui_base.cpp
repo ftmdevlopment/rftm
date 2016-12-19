@@ -331,3 +331,8 @@ void UiBase::run()
     pthread_join(event_reader, NULL);
 }
 
+double UiBase::get_last_alarm_ts()
+{
+    return last_alarm_ts_.tv_sec + last_alarm_ts_.tv_nsec/1e9;
+}
+
