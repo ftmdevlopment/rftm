@@ -11,7 +11,13 @@
 class DlpTest : public UiUserJudgeTest
 {
 public:
-    USER_JUDGE_TEST_ENTRY(DlpTest) {}
+    USER_JUDGE_TEST_ENTRY(DlpTest) {
+        pthread_mutex_init(&mutex_, NULL);
+    }
+
+    ~DlpTest() {
+        pthread_mutex_destroy(&mutex_);
+    }
 
 private:
     void Draw();
