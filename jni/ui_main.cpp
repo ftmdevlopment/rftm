@@ -206,6 +206,7 @@ UiMain::UiMain()
     tests_[count++] = new PowerOff(this, "Power off");
     for (int i = count; i < kCases; i++) {
         tests_[i] = new EmptyTest(this, "");
+        case_colors[i] = &empty_color;
     }
 
     printf("border_radius: %d\n", border_radius);
@@ -256,7 +257,7 @@ void UiMain::Draw()
                 set_color(&fail_color);
                 break;
             default:
-                set_color(&case_color);
+                set_color(case_colors[i]);
                 break;
         }
 
