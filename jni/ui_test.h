@@ -88,13 +88,14 @@ protected:
 
     void clear_judge_result();
 
-    bool wait_for_judge_result();
+    void wait_for_judge_result();
 
     void OnLeftTouch(int value);
 
     void OnRightTouch(int value);
 
 private:
+    volatile bool ready_ = false;
     BlockingQueue<bool> judge_result_;
 };
 

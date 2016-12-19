@@ -38,29 +38,30 @@ void UiTest::OnKey(int code, int value)
 
 void UiTest::OnLeftTouch(int value)
 {
+    XLOGI("%s %d %d", __func__, value, state());
+    if (state() == TS_TESTING) return;
     if (in_left_filer(value)) return;
-    XLOGI("%s %d\n", __func__, value);
     fail();
     back();
 }
 
 void UiTest::OnRightTouch(int value)
 {
+    XLOGI("%s %d %d", __func__, value, state());
+    if (state() == TS_TESTING) return;
     if (in_right_filter(value)) return;
-    XLOGI("%s %d\n", __func__, value);
     pass();
     back();
 }
 
 void UiTest::OnAlarm()
 {
-    XLOGI("alarm");
+    XLOGI("last alarm: %.3f", get_last_alarm_ts());
     back();
 }
 
 void UiTest::OnEnter()
 {
-    set_alarm(60);
     XLOGI("enter %p start test", this);
     state(TS_TESTING);
     result("");
@@ -69,7 +70,7 @@ void UiTest::OnEnter()
 
 void UiTest::OnLeave()
 {
-    XLOGI("leave %p wait test finish", this);
+    XLOGI("leave %p test", this);
     if (state() == TS_TESTING) {
         wait();
         result("");
@@ -79,6 +80,7 @@ void UiTest::OnLeave()
 
 void UiTest::RunTest()
 {
+    XLOGI("%p RunTest", this);
 }
 
 const char* UiTest::state_str() const
@@ -122,6 +124,7 @@ void* UiTest::do_test(void *thiz)
 {
     UiTest* pThis = (UiTest*)thiz;
     pThis->RunTest();
+    pThis->back();
     return NULL;
 }
 
@@ -157,23 +160,32 @@ void UiUserJudgeTest::clear_judge_result()
     judge_result_.clear();
 }
 
-bool UiUserJudgeTest::wait_for_judge_result()
+void UiUserJudgeTest::wait_for_judge_result()
 {
-    return judge_result_.take();
+    ready_ = true;
+
+    bool result = judge_result_.take();
+    if (result) {
+        pass();
+    } else {
+        fail();
+    }
 }
 
 void UiUserJudgeTest::OnLeftTouch(int value)
 {
+    if (!ready_) return;
     if (in_left_filer(value)) return;
     UiTest::OnLeftTouch(value);
-    judge_result_.put(true);
+    judge_result_.put(false);
 }
 
 void UiUserJudgeTest::OnRightTouch(int value)
 {
+    if (!ready_) return;
     if (in_right_filter(value)) return;
     UiTest::OnRightTouch(value);
-    judge_result_.put(false);
+    judge_result_.put(true);
 }
 
 UiUserJudgeTest::UiUserJudgeTest(UiBase* main, const char* name)
