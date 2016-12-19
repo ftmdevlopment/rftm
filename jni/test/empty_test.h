@@ -13,18 +13,17 @@ public:
     UITEST_ENTRY(EmptyTest) {}
 
 private:
+    void OnAlarm() { back(); }
 
-    void Draw() { UiTest::Draw(); }
-
-    void OnEnter() {}
+    void OnEnter() { set_alarm_ms(1); }
 
     void OnLeave() {}
 
-    void OnKey(int code, int value) { back(); }
+    void OnKey(int code, int value) {}
 
-    void OnLeftTouch(int value) { back(); }
+    void OnLeftTouch(int value) {}
 
-    void OnRightTouch(int value) { back(); }
+    void OnRightTouch(int value) {}
 };
 
 
