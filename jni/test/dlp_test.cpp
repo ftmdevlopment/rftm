@@ -17,7 +17,6 @@ void DlpTest::Draw()
 
 void DlpTest::RunTest()
 {
-    set_alarm(0);
     current_displayed_ = 0;
 
     scan_images();
@@ -25,7 +24,7 @@ void DlpTest::RunTest()
 
     clear_judge_result();
     wait_for_judge_result();
-    set_alarm_ms(1);
+
     clear_judge_result();
 }
 
@@ -45,7 +44,6 @@ void DlpTest::scan_images()
     list_directory(&vec, dir.c_str());
 
     std::sort(vec.begin(), vec.end());
-    set_alarm(0);
 
     auto start_with = [](const std::string& str, std::string keyword) {
         return str.find(keyword) == 0;
@@ -77,6 +75,7 @@ void DlpTest::OnRightTouch(int value)
     if (has_next_image()) {
         next_image();
     } else {
+        pass();
         UiUserJudgeTest::OnRightTouch(value);
     }
 }

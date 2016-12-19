@@ -72,11 +72,9 @@ void MemTest::RunTest()
     result(format_string("Memory: %uM\nPASS", total));
 
     pass();
-    set_alarm_ms(1);
     return;
 
 FAILURE:
     result("FAIL");
     fail();
-    set_alarm_ms(1);
 }

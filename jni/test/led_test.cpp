@@ -50,8 +50,6 @@ void LedTest::RunTest()
 
     int fd, ret;
 
-    set_alarm(0);
-
     fd = open("/dev/dm163", O_RDWR | O_NONBLOCK);
     if (fd < 0) {
         ALOGD("Failed to open /dev/dm163");
@@ -91,7 +89,6 @@ void LedTest::RunTest()
     sleep(2);
 #endif
 
-    set_alarm(0);
     {
         std::string out;
         run_command(kXmosLedTestBin, &out);
@@ -111,14 +108,12 @@ void LedTest::RunTest()
     clear_judge_result();
     result("PASSS/FAIL?");
     wait_for_judge_result();
-    set_alarm_ms(1);
     clear_judge_result();
     return ;
 
 FAIL:
 //    close(fd);
     fail();
-    set_alarm_ms(1);
     clear_judge_result();
 }
 

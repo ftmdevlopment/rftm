@@ -15,7 +15,6 @@ void KeyTest::OnEnter()
     left_ = std::string(kValues, kNoMark);
     right_ = std::string(kValues, kNoMark);
     time_left_ = kTestSeconds;
-    set_alarm(1);
     update_and_check_result();
 }
 
@@ -88,18 +87,18 @@ void KeyTest::update_and_check_result()
                    + "R:" + right_ + "\n"
                    + "Top:" + top_ + "\n"
                    + "Power:" + rear_ + "\n");
+            time_left_ = 0;
         }
-        back();
+        pass();
     }
 }
 
-void KeyTest::OnAlarm()
+void KeyTest::RunTest()
 {
-    if (time_left_ > 0) {
-        time_left_--;
-        set_alarm(1);
+    while (time_left_ > 0) {
         update_and_check_result();
-    } else {
-        UiTest::OnAlarm();
+        sleep(1);
+        time_left_--;
     }
+    fail();
 }

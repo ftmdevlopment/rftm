@@ -8,8 +8,6 @@
 
 void ResultTest::RunTest()
 {
-    set_alarm(0);
-
     std::string text;
     for (int i = 0; i < 5; i++) {
         text += format_string("%d\n", i);
@@ -24,6 +22,4 @@ void ResultTest::RunTest()
         msleep(50);
     }
     pass();
-
-    set_alarm(1);
 }

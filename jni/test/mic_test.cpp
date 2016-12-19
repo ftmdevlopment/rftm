@@ -148,7 +148,6 @@ static void* capture_work(void* arg)
 
 void MicTest::RunTest()
 {
-    set_alarm(0);
     ready.clear();
     finish.clear();
     frame_queue.clear();
@@ -219,12 +218,10 @@ DONE:
     }
 
     pass();
-    set_alarm_ms(1);
     return;
 
 FAILURE:
     fail();
-    set_alarm_ms(1);
 }
 
 static const int kBarGap = 5;

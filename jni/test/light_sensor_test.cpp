@@ -9,7 +9,6 @@
 void LightSensorTest::OnEnter()
 {
     UiTest::OnEnter();
-    set_alarm(10);
     write_file("/sys/class/input/input4/enable", "1");
 }
 
@@ -28,6 +27,7 @@ void LightSensorTest::OnEvent(int fd, struct input_event* ev, void* data)
         snprintf(text, sizeof(text), "sensor value: %d", ev->value);
         result(text);
 
+        XLOGI("sensor event %d", ev->value);
         if (values_.size() < kSampleTimes) {
             values_.put(ev->value);
         }

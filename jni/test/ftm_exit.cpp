@@ -29,11 +29,9 @@ void FtmExit::RunTest()
         run_command(FW_GETENV " ftm_mode", &out);
         result(out);
         pass();
-        set_alarm_ms(1);
         return;
     }
 
 FAILURE:
     fail();
-    set_alarm_ms(1);
 }

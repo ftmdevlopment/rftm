@@ -6,7 +6,6 @@
 
 void FanTest::RunTest()
 {
-    set_alarm(0);
     sleep(1);
 
     result("turn down fan...");
@@ -21,7 +20,6 @@ void FanTest::RunTest()
 
     clear_judge_result();
     wait_for_judge_result();
-    set_alarm_ms(1);
     clear_judge_result();
 }
 

@@ -157,5 +157,4 @@ void WifiTest::RunTest()
     sleep(3);
 
     wifi_down();
-    set_alarm_ms(1);
 }

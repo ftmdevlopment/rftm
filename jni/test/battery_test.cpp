@@ -12,10 +12,8 @@
 
 void BatteryTest::RunTest()
 {
-    set_alarm(0);
-
+    clear_judge_result();
     wait_for_judge_result();
-    set_alarm_ms(1);
     clear_judge_result();
 }
 
@@ -62,7 +60,7 @@ void BatteryTest::Draw()
                              charger_online ? "online " : "offline",
                              battery_present ? "present" : "none   ",
                              battery_voltage / 1e6,
-//                             battery_current / 1e6,
+//                             battery_current / 1e6, // FIXME
                              battery_capacity));
         UiTest::Draw();
         gr_flip();

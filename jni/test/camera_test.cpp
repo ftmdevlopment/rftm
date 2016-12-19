@@ -75,7 +75,6 @@ void CameraTest::RunTest()
     XLOGI("%s start as %d.", kCameraTestBin, pid);
 
     // wait for user judge
-    set_alarm(0);
     sleep(2);
     XLOGI("wait for user judge...");
     clear_judge_result();
@@ -97,7 +96,6 @@ void CameraTest::RunTest()
     if (WCOREDUMP(status)) {
         XLOGI("child %d core dumped!", child);
     }
-    set_alarm_ms(1);
     clear_judge_result();
 }
 

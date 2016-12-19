@@ -39,11 +39,9 @@ void ClearFlash::RunTest()
 #undef EXEC
 
     pass();
-    set_alarm_ms(1);
     return;
 
 FAILURE:
     fail();
-    set_alarm_ms(1);
 }
 

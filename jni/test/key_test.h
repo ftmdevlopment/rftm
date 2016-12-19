@@ -13,6 +13,8 @@ public:
     UITEST_ENTRY(KeyTest) { }
 
 private:
+    void RunTest();
+
     void OnEnter();
 
     void OnLeave();
@@ -22,8 +24,6 @@ private:
     void OnLeftTouch(int value);
 
     void OnRightTouch(int value);
-
-    void OnAlarm();
 
     bool check();
 
