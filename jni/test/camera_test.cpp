@@ -6,7 +6,11 @@
 #include <fcntl.h>
 #include "camera_test.h"
 
+#ifdef FTM_BIN_PATH
+static const char* kCameraTestBin = FTM_BIN_PATH "camera_test";
+#else  // FTM_BIN_PATH
 static const char* kCameraTestBin = "/system/bin/camera_test";
+#endif // FTM_BIN_PATH
 static const char* kCameraTestArgs[] = {kCameraTestBin, "0", NULL};
 
 static void zap_stdio(void)

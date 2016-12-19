@@ -8,8 +8,13 @@
 
 #define ALOGD XLOGI
 
+#ifdef FTM_BIN_PATH
+static const char* kXmosLedTestBin = FTM_BIN_PATH "ledtest";
+static const char* kXmosLedOffBin = FTM_BIN_PATH "ledoff";
+#else  // FTM_BIN_PATH
 static const char* kXmosLedTestBin = "/system/bin/ledtest";
 static const char* kXmosLedOffBin = "/system/bin/ledoff";
+#endif // FTM_BIN_PATH
 
 void LedTest::RunTest()
 {

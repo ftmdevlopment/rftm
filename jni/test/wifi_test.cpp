@@ -6,6 +6,12 @@
 
 #include <sstream>
 
+#ifdef FTM_BIN_PATH
+#define IWLIST FTM_BIN_PATH "iwlist"
+#else  // FTM_BIN_PATH
+#define IWLIST "iwlist"
+#endif // FTM_BIN_PATH
+
 static bool get_wlan0_state(std::string* state)
 {
     std::string out;
@@ -131,7 +137,7 @@ void WifiTest::RunTest()
     wifi_up();
 
     result("scan...");
-    run_command("iwlist wlan0 scan", &out);
+    run_command(IWLIST " wlan0 scan", &out);
 
     std::vector<ScanResult> ap_list;
     XLOGI("wifi scan result: ```%s```", out.c_str());

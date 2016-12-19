@@ -15,13 +15,13 @@ static double sample_diff_passed_threshold = 1e7;
 static const unsigned int kPcmCard = 0;
 static const unsigned int kPcmDevice = 0;
 
-#ifdef RESOURCE_PATH
-static const std::string kTestSound1 = RESOURCE_PATH "test1.wav";
-static const std::string kTestSound2 = RESOURCE_PATH "test2.wav";
-#else  // RESOURCE_PATH
+#ifdef FTM_SND_PATH
+static const std::string kTestSound1 = FTM_SND_PATH "test1.wav";
+static const std::string kTestSound2 = FTM_SND_PATH "test2.wav";
+#else  // FTM_SND_PATH
 static const std::string kTestSound1 = "/data/local/tmp/test1.wav";
 static const std::string kTestSound2 = "/data/local/tmp/test2.wav";
-#endif  // RESOURCE_PATH
+#endif  // FTM_SND_PATH
 
 static struct pcm_config config = {
         .channels = 16,

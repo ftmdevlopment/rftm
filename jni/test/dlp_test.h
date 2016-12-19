@@ -16,13 +16,15 @@ public:
 private:
     void Draw();
 
-    void OnKey(int code, int value);
+    void OnRightTouch(int value);
 
     void RunTest();
 
     void scan_images();
 
     void next_image();
+
+    bool has_next_image();
 
     static const int kDiplayTime = 2;
     BlockingQueue<std::string> show_;

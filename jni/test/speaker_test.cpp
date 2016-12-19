@@ -4,13 +4,13 @@
 
 #include "speaker_test.h"
 
-#ifdef RESOURCE_PATH
-std::string left_sound = RESOURCE_PATH "left_test.wav";
-std::string right_sound = RESOURCE_PATH "right_test.wav";
-#else  // RESOURCE_PATH
+#ifdef FTM_SND_PATH
+std::string left_sound = FTM_SND_PATH "left_test.wav";
+std::string right_sound = FTM_SND_PATH "right_test.wav";
+#else  // FTM_SND_PATH
 std::string left_sound = "/data/local/tmp/left_test.wav";
 std::string right_sound = "/data/local/tmp/right_test.wav";
-#endif  // RESOURCE_PATH
+#endif  // FTM_SND_PATH
 
 void SpeakerTest::RunTest()
 {
