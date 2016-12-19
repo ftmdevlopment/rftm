@@ -14,6 +14,7 @@ std::string right_sound = "/data/local/tmp/right_test.wav";
 
 void SpeakerTest::RunTest()
 {
+    set_alarm(0);
     std::string out;
 
     // check sound file exists

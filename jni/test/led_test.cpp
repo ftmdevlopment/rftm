@@ -91,6 +91,7 @@ void LedTest::RunTest()
     sleep(2);
 #endif
 
+    set_alarm(0);
     {
         std::string out;
         run_command(kXmosLedTestBin, &out);

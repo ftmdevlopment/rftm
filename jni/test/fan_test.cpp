@@ -6,6 +6,7 @@
 
 void FanTest::RunTest()
 {
+    set_alarm(0);
     sleep(1);
 
     result("turn down fan...");
