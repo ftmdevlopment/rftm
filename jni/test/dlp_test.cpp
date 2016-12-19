@@ -32,6 +32,7 @@ void DlpTest::RunTest()
     scan_images();
     next_image();
 
+    clear_judge_result();
     wait_for_judge_result();
     set_alarm_ms(1);
     clear_judge_result();

@@ -52,6 +52,7 @@ void SpeakerTest::RunTest()
         goto FAIL;
     }
 
+    clear_judge_result();
     result("PASS/FAIL?");
     wait_for_judge_result();
     set_alarm_ms(1);

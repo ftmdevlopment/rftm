@@ -78,6 +78,7 @@ void CameraTest::RunTest()
     set_alarm(0);
     sleep(2);
     XLOGI("wait for user judge...");
+    clear_judge_result();
     wait_for_judge_result();
     XLOGI("got user judge...");
 

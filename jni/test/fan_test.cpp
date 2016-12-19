@@ -19,6 +19,7 @@ void FanTest::RunTest()
     result("turn on fan...");
     write_file("/sys/class/fan/fan_duty/duty", "100");
 
+    clear_judge_result();
     wait_for_judge_result();
     set_alarm_ms(1);
     clear_judge_result();
