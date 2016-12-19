@@ -33,6 +33,8 @@ bool UiBase::s_running = true;
 bool UiBase::s_ignore_release = false;
 
 static int iInstanceCount = 0;
+
+pthread_mutex_t g_ui_mutex;
 static UiBase *pLeaveUi = NULL;
 static UiBase *pEnterUi = NULL;
 static UiBase *pCurrentUi = NULL;
@@ -45,10 +47,12 @@ struct GlobalConext
         dlp_init();
         gr_init();
         ev_init(UiBase::event_callback, NULL);
+        pthread_mutex_init(&g_ui_mutex, NULL);
     }
 
     ~GlobalConext() {
         gr_exit();
+        pthread_mutex_destroy(&g_ui_mutex);
     }
 };
 
@@ -71,6 +75,7 @@ void UiBase::SetIgnoreRelease(bool ignore)
 
 void UiBase::SetCurrentUI(UiBase *ui)
 {
+    ScopedLock _lock(&g_ui_mutex);
     pLeaveUi = pCurrentUi;
     pEnterUi = ui;
     pCurrentUi = ui;
@@ -78,6 +83,7 @@ void UiBase::SetCurrentUI(UiBase *ui)
 
 UiBase* UiBase::GetCurrentUI()
 {
+    ScopedLock _lock(&g_ui_mutex);
     return pCurrentUi;
 }
 
@@ -245,29 +251,41 @@ void UiBase::run()
     while (s_running) {
         clock_gettime(CLOCK_REALTIME, &ts_start);
 
-        // check and fire enter/leave callback
-        if (pLeaveUi) {
-            UiBase* p = pLeaveUi;
-            pLeaveUi = NULL;
-            p->OnLeave(); // may call SetCurrentUI
+        UiBase *pCurrent = NULL, *pEnter = NULL, *pLeave = NULL;
+        {
+            ScopedLock _lock(&g_ui_mutex);
+            pCurrent = pCurrentUi;
+            pEnter = pEnterUi;
+            pLeave = pLeaveUi;
         }
-        if (pEnterUi) {
-            UiBase* p = pEnterUi;
-            pEnterUi = NULL;
-            p->last_alarm_ts_ = ts_start; // refresh alarm start
-            p->OnEnter();
+
+        // check and fire enter/leave callback
+        if (pLeave) {
+            {
+                ScopedLock _lock(&g_ui_mutex);
+                pLeaveUi = NULL;
+            }
+            pLeave->OnLeave(); // may call SetCurrentUI
+        }
+        if (pEnter) {
+            {
+                ScopedLock _lock(&g_ui_mutex);
+                pEnterUi = NULL;
+            }
+            pEnter->last_alarm_ts_ = ts_start; // refresh alarm start
+            pEnter->OnEnter();
         }
 
         // check and handle alarm
-        long diff_ms = diff_timespec_us(&ts_start, &pCurrentUi->last_alarm_ts_)/US_PER_MS;
-        if (pCurrentUi->alarm_ms_ > 0 && diff_ms >= pCurrentUi->alarm_ms_) {
-            pCurrentUi->alarm_ms_ = 0; // means alarmed
-//            XLOGI("alarm timestamp: %ld %ld", pCurrentUi->last_alarm_ts_.tv_sec, pCurrentUi->last_alarm_ts_.tv_nsec);
-            pCurrentUi->OnAlarm(); // OnAlarm maybe recall set_alarm, so DO NOT MOVE IT UP.
+        long diff_ms = diff_timespec_us(&ts_start, &pCurrent->last_alarm_ts_)/US_PER_MS;
+        if (pCurrent->alarm_ms_ > 0 && diff_ms >= pCurrent->alarm_ms_) {
+            pCurrent->alarm_ms_ = 0; // means alarmed
+//            XLOGI("alarm timestamp: %ld %ld", pCurrent->last_alarm_ts_.tv_sec, pCurrent->last_alarm_ts_.tv_nsec);
+            pCurrent->OnAlarm(); // OnAlarm maybe recall set_alarm, so DO NOT MOVE IT UP.
         }
 
         // draw frame
-        pCurrentUi->Draw();
+        pCurrent->Draw();
 
         // merge and handle events
         Event event;
@@ -281,17 +299,17 @@ void UiBase::run()
             }
         }
         if (merged && !ignore) {
-            pCurrentUi->OnEvent(event.fd, &event.ev, event.data);
+            pCurrent->OnEvent(event.fd, &event.ev, event.data);
             switch (event.source) {
                 case UiBase::UI_POWER_KEY:
                 case UiBase::UI_TOP_KEY:
-                    pCurrentUi->OnKey(event.ev.code, event.value);
+                    pCurrent->OnKey(event.ev.code, event.value);
                     break;
                 case UiBase::UI_LEFT_TOUCH:
-                    pCurrentUi->OnLeftTouch(event.value);
+                    pCurrent->OnLeftTouch(event.value);
                     break;
                 case UiBase::UI_RIGHT_TOUCH:
-                    pCurrentUi->OnRightTouch(event.value);
+                    pCurrent->OnRightTouch(event.value);
                     break;
                 case UiBase::UI_UNKNOW:
                     break;
