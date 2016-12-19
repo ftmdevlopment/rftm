@@ -8,6 +8,7 @@
 #include <queue>
 #include <vector>
 #include <pthread.h>
+#include "socped_lock.h"
 
 template <typename T>
 class BlockingQueue
@@ -149,15 +150,6 @@ public:
         ScopedLock _locker(&mutex_);
         return queue_.empty();
     }
-
-protected:
-    struct ScopedLock
-    {
-        ScopedLock(pthread_mutex_t* mutex) : mutex_(mutex) { pthread_mutex_lock(mutex_); }
-        ~ScopedLock() { pthread_mutex_unlock(mutex_); }
-    private:
-        pthread_mutex_t* mutex_;
-    };
 
 private:
     size_type               capacity_;

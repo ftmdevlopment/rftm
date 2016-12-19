@@ -11,14 +11,6 @@
 
 #define msleep(n) usleep((n) * 1000)
 
-struct ScopedLock
-{
-    ScopedLock(pthread_mutex_t* mutex) : mutex_(mutex) { pthread_mutex_lock(mutex_); }
-    ~ScopedLock() { pthread_mutex_unlock(mutex_); }
-private:
-    pthread_mutex_t* mutex_;
-};
-
 UiTest::UiTest(UiBase* main, const char* name)
         : main_(main),
           state_(TS_INIT),
