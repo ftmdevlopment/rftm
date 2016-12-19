@@ -1,23 +1,18 @@
 #!/bin/bash
 
+FTM_RESOUCE_PATH=/system/ftmres/
+
 adb remount
 
-# push bins
-adb push iwlist /system/bin/
-adb push ledtest /system/bin/
-adb push camera_test /system/bin/
+echo ensure $FTM_RESOUCE_PATH exists
+adb shell mkdir -p $FTM_RESOUCE_PATH
 
-adb shell mkdir -p /system/ftmres/
-adb shell mkdir -p /system/ftmres/img/
+echo push bins
+adb push bin/ $FTM_RESOUCE_PATH
+adb shell "chmod +x $FTM_RESOUCE_PATH/bin/*"
 
-# push pictures
-for i in `ls *.png`
-do
-    adb push $i /system/ftmres/img/
-done
+echo push pictures
+adb push img/ $FTM_RESOUCE_PATH
 
-# push sound files
-for i in `ls *.wav`
-do
-    adb push $i /system/ftmres/
-done
+echo push sound files
+adb push snd/ $FTM_RESOUCE_PATH
