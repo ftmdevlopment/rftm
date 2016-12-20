@@ -89,25 +89,24 @@ void LedTest::RunTest()
     sleep(2);
 #endif
 
-    {
-        std::string out;
-        run_command(kXmosLedTestBin, &out);
-        if (out.find("not found") != out.npos || out.find("No such file") != out.npos) {
-            result(out);
-            goto FAIL;
-        }
-
-        XLOGI("try %s", kXmosLedOffBin);
-        run_command(kXmosLedOffBin, &out);
-        if (out.find("not found") != out.npos || out.find("No such file") != out.npos) {
-            result(out);
-            goto FAIL;
-        }
+    std::string out;
+    run_command(kXmosLedTestBin, &out);
+    if (out.find("not found") != out.npos || out.find("No such file") != out.npos) {
+        result(out);
+        goto FAIL;
     }
 
     clear_judge_result();
     result("PASSS/FAIL?");
+
     wait_for_judge_result();
+
+    XLOGI("try %s", kXmosLedOffBin);
+    run_command(kXmosLedOffBin, &out);
+    if (out.find("not found") != out.npos || out.find("No such file") != out.npos) {
+        result(out);
+        goto FAIL;
+    }
     clear_judge_result();
     return ;
 
