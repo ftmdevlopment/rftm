@@ -290,6 +290,7 @@ void UiMain::OnRightTouch(int value)
 
 void UiMain::OnKey(int code, int value)
 {
+    if (code != KEY_OK) return;
     XLOGI("switch to test %d\n", focus_case_id);
     UiBase::SetCurrentUI(tests_[focus_case_id]);
 }

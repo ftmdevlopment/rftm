@@ -27,7 +27,6 @@ void FtmExit::RunTest()
 
     if (out != cur) {
         run_command(FW_GETENV " ftm_mode", &out);
-        result(out);
         pass();
         return;
     }
