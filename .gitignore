@@ -8,4 +8,11 @@ libs/
 !.gitignore
 
 cmake*
+CMake*
+Make*
 *.txt
+*.cbp
+
+*.tar.gz
+
+*.diff
