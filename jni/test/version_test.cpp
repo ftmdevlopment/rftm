@@ -44,6 +44,13 @@ std::string get_xmos_version()
     return result;
 }
 
+std::string getprop(std::string name)
+{
+    std::string out;
+    run_command("getprop " + name, &out);
+    return trim_string(out);
+}
+
 void VersionTest::RunTest()
 {
     std::string serial = get_serial();
@@ -63,9 +70,11 @@ void VersionTest::RunTest()
     std::string xmos = get_xmos_version();
     XLOGI("XMOS version: `%s`", xmos.c_str());
 
+    std::string release = getprop("ro.build.version.release");
     result(format_string("SN: %s\n", serial.c_str())
            + format_string("Kernel: %s\n", kernel.c_str())
-           + format_string("Build: %s\n", build.c_str())
+//           + format_string("Build: %s\n", build.c_str())
+           + format_string("%s\n", release.c_str())
            + format_string("XMOS: %s\n", xmos.c_str())
            + format_string("FTM: %s", FTM_VERSION));
     if (serial.empty() || kernel.empty()) { // || xmos.empty() // FIXME
