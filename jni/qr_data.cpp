@@ -9,11 +9,11 @@
 
 #include "utils.h"
 
-const std::string QrData::kDefaultSn1 = "xxxxxxxxxxxxxxxx";
-const std::string QrData::kDefaultSn2 = "xxxxxxxxxxxx";
+const std::string QrData::kDefaultSn1 = "";
+const std::string QrData::kDefaultSn2 = "";
 const std::string QrData::kDefaultSn3Sum = "xxxx";
-const std::string QrData::kDefaultIndex = "x";
-const std::string QrData::kDefaultData = "xxxx";
+const std::string QrData::kDefaultIndex = "";
+const std::string QrData::kDefaultData = "";
 
 std::string QrData::to_string()
 {
