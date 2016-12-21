@@ -47,8 +47,18 @@ static const int kQRCellSize = 4;
 static const int kQRBorderWidth = 8;
 
 //static const char* kDefaultQrText = "846425A00481,010116000978,0a22,2.1.3,111,212000010000000000,,,00000bf0";
-static const char* kDefaultSN2 = "012345678901";
-static const char* kDefaultSN3 = "012345678901";
+//static const char* kDefaultSN2 = "012345678901";
+//static const char* kDefaultSN3 = "012345678901";
+
+static std::string version_shorter(const char* version)
+{
+    int major = 0, minor = 0, patch = 0;
+    sscanf(version, "%d.%d.%d", &major, &minor, &patch);
+    major %= 10;
+    minor %= 10;
+    patch %= 100;
+    return format_string("%d%d%02d", major, minor, patch);
+}
 
 static char state2result(int state)
 {
@@ -180,9 +190,7 @@ UiMain::UiMain()
 
     qrdata_ = QrData::Builder::instance()
             .set_sn1(get_serial())
-            .set_sn2(kDefaultSN2)
-            .set_sn3(kDefaultSN3)
-            .set_version(kVersion)
+            .set_version(version_shorter(kVersion))
             .build();
 
     set_alarm(1);

@@ -9,15 +9,20 @@
 
 class QrData
 {
-    std::string sn1_;
-    std::string sn2_;
-    std::string sn3_;
-    std::string sn3sum_; //
+    static const std::string kDefaultSn1; // = "xxxxxxxxxxxxxxxx";
+    static const std::string kDefaultSn2; // = "xxxxxxxxxxxx";
+    static const std::string kDefaultSn3Sum; // = "xxxx";
+    static const std::string kDefaultIndex; // = "x";
+    static const std::string kDefaultData; // = "xxxx";
+    std::string sn1_ = kDefaultSn1;
+    std::string sn2_ = kDefaultSn2;
+    std::string sn3_ = kDefaultSn3Sum;
+    std::string sn3sum_ = kDefaultSn3Sum; //
     std::string version_;
     std::string sn_check_; //
     std::string results_;
-    std::string index_;
-    std::string data_;
+    std::string index_ = kDefaultIndex;
+    std::string data_ = kDefaultData;
     std::string checksum_;
 
 public:

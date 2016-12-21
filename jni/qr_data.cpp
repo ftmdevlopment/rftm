@@ -9,6 +9,12 @@
 
 #include "utils.h"
 
+const std::string QrData::kDefaultSn1 = "xxxxxxxxxxxxxxxx";
+const std::string QrData::kDefaultSn2 = "xxxxxxxxxxxx";
+const std::string QrData::kDefaultSn3Sum = "xxxx";
+const std::string QrData::kDefaultIndex = "x";
+const std::string QrData::kDefaultData = "xxxx";
+
 std::string QrData::to_string()
 {
     std::stringstream ss;
@@ -72,9 +78,9 @@ std::string QrData::rand_sn()
 std::string QrData::check_sn123()
 {
     std::string s = "000";
-    if (sn1_.size() > 0) s[0] = '1';
-    if (sn2_.size() > 0) s[1] = '1';
-    if (sn3_.size() > 0) s[2] = '1';
+    if (sn1_ != kDefaultSn1) s[0] = '1';
+    if (sn2_ != kDefaultSn2) s[1] = '1';
+    if (sn3_ != kDefaultSn3Sum) s[2] = '1';
     return s;
 }
 
