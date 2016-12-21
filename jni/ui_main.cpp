@@ -32,11 +32,11 @@ using qrcodegen::QrCode;
 
 static const char* kVersion = FTM_VERSION;
 
-static const int kResultLineMaxChars = 20;
+static const int kResultLineMaxChars = 21;
 
 static const double kFreezeAngle = (80/180.0*M_PI);
 
-static const int kBorderWidth = 14;
+static const int kBorderWidth = 4;
 static const int kGapperWidth = 16;
 static const int kCaseRadius  = 18;
 static const int kArrowLength = 16;
