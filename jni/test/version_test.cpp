@@ -46,9 +46,7 @@ std::string get_xmos_version()
 
 void VersionTest::RunTest()
 {
-    std::string serial;
-    run_command("getprop ro.serialno", &serial);
-    serial = trim_string(serial);
+    std::string serial = get_serial();
     XLOGI("serialno: %s", serial.c_str());
 
     std::string out;

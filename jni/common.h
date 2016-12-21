@@ -7,4 +7,6 @@
 
 #define FTM_VERSION "1.0.0"
 
+const char* get_serial();
+
 #endif //RFTM_COMMON_H

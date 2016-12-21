@@ -55,6 +55,7 @@ LOCAL_SRC_FILES := \
     ui_base.cpp \
     ui_main.cpp \
     ui_test.cpp \
+    common.cpp \
     utils.cpp \
     main.cpp \
     log.cpp \

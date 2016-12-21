@@ -74,13 +74,6 @@ static char state2result(int state)
     }
 }
 
-static std::string get_serial()
-{
-    std::string out;
-    run_command("getprop ro.serialno", &out);
-    return trim_string(out);
-}
-
 void UiMain::draw_main()
 {
     // test state, name, result
