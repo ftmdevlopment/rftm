@@ -50,16 +50,6 @@ static const int kQRBorderWidth = 8;
 //static const char* kDefaultSN2 = "012345678901";
 //static const char* kDefaultSN3 = "012345678901";
 
-static std::string version_shorter(const char* version)
-{
-    int major = 0, minor = 0, patch = 0;
-    sscanf(version, "%d.%d.%d", &major, &minor, &patch);
-    major %= 10;
-    minor %= 10;
-    patch %= 100;
-    return format_string("%d%d%02d", major, minor, patch);
-}
-
 static char state2result(int state)
 {
     switch (state) {
@@ -183,7 +173,7 @@ UiMain::UiMain()
 
     qrdata_ = QrData::Builder::instance()
             .set_sn1(get_serial())
-            .set_version(version_shorter(kVersion))
+            .set_version(kVersion)
             .build();
 
     set_alarm(1);

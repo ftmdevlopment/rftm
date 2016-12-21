@@ -11,7 +11,7 @@
 
 const std::string QrData::kDefaultSn1 = "";
 const std::string QrData::kDefaultSn2 = "";
-const std::string QrData::kDefaultSn3Sum = "xxxx";
+const std::string QrData::kDefaultSn3Sum = "";
 const std::string QrData::kDefaultIndex = "";
 const std::string QrData::kDefaultData = "";
 

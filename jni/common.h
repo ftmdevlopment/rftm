@@ -5,7 +5,7 @@
 #ifndef RFTM_COMMON_H
 #define RFTM_COMMON_H
 
-#define FTM_VERSION "1.0.0"
+#define FTM_VERSION "1.0.5"
 
 const char* get_serial();
 
