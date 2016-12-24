@@ -147,12 +147,12 @@ void UiTest::back()
 
 bool UiTest::in_left_filer(int value)
 {
-    return value != 0x10 && value != 0x08;
+    return false;
 }
 
 bool UiTest::in_right_filter(int value)
 {
-    return value != 0x10 && value != 0x08;
+    return false;
 }
 
 void UiUserJudgeTest::clear_judge_result()
