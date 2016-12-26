@@ -247,6 +247,9 @@ void UiMain::Draw()
             case UiTest::TS_FAILED:
                 set_color(&fail_color);
                 break;
+            case UiTest::TS_TESTING:
+                set_color(&testing_color);
+                break;
             default:
                 set_color(case_colors[i]);
                 break;
