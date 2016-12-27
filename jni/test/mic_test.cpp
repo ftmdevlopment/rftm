@@ -10,7 +10,9 @@
 
 static bool show_frame_queue_size = false;
 
-static double sample_diff_passed_threshold = 1e7;
+static const double kCVthreshold = 1.001;
+
+static const double kNormalScalar = 10.0;
 
 static const unsigned int kPcmCard = 0;
 static const unsigned int kPcmDevice = 0;
@@ -67,6 +69,7 @@ struct Frame
     }
 
     static constexpr double a = -1e8;
+    static constexpr double k = 2;
 
     // map value to (0, 1)
     static double normalize(int32_t x)
@@ -74,7 +77,7 @@ struct Frame
         if (x < 0) {
             return -normalize(-x);
         }
-        return a/(x - a) + 1.0;
+        return a/(k*x - a) + 1.0;
     }
 
     static const int kFiltedSize = 8;  // config.channels / 2;
@@ -93,14 +96,6 @@ struct Frame
 static BlockingQueue<bool> ready;
 static BlockingQueue<bool> finish;
 static BlockingQueue<Frame> frame_queue;
-
-static double sample_max[Frame::kFiltedSize];
-static double sample_min[Frame::kFiltedSize];
-static double sample_sum[Frame::kFiltedSize];
-static double sample_2sum[Frame::kFiltedSize];
-static double sample_mean[Frame::kFiltedSize];
-static double sample_variance[Frame::kFiltedSize];
-static int sample_count;
 
 static void* capture_work(void* arg)
 {
@@ -146,12 +141,24 @@ static void* capture_work(void* arg)
     return NULL;
 }
 
+static double sample_max[Frame::kFiltedSize];
+static double sample_min[Frame::kFiltedSize];
+static double sample_sum[Frame::kFiltedSize];
+static double sample_2sum[Frame::kFiltedSize];
+static double sample_mean[Frame::kFiltedSize];
+static double sample_variance[Frame::kFiltedSize];
+
+// https://en.wikipedia.org/wiki/Coefficient_of_variation
+static double sample_CV[Frame::kFiltedSize];
+static int sample_count;
+
 void MicTest::RunTest()
 {
     ready.clear();
     finish.clear();
     frame_queue.clear();
 
+    bool channel_ok[Frame::kFiltedSize];
 #define FILL_ARRAY(a, v) std::fill(a, a + sizeof(a)/sizeof(a[0]), v)
 
     FILL_ARRAY(sample_max, 0.0);
@@ -160,6 +167,7 @@ void MicTest::RunTest()
     FILL_ARRAY(sample_2sum, 0.0);
     FILL_ARRAY(sample_mean, 0.0);
     FILL_ARRAY(sample_variance, 0.0);
+    FILL_ARRAY(channel_ok, false);
     sample_count = 0;
 
 #undef FILL_ARRAY
@@ -211,17 +219,33 @@ DONE:
 
     // check sample diff for each channel.
     for (int i = 0; i < Frame::kFiltedSize; i++) {
-        XLOGI("%d: %g\t%g\t%g\n", i, sample_variance[i], sample_max[i] - sample_min[i], sample_mean[i]);
-        if (sample_max[i] - sample_min[i] < sample_diff_passed_threshold) {
-            goto FAILURE;
-        }
+        sample_mean[i] = sample_sum[i] / sample_count;
+        sample_variance[i] = (sample_2sum[i] + sample_mean[i] * sample_mean[i]) / sample_count;
+        sample_CV[i] = sqrt(sample_variance[i]) / sample_mean[i];
+        channel_ok[i] = (sample_CV[i] > kCVthreshold);
+        XLOGI("%d: %.5f %.5f %.5f %.5f", i,
+              sample_max[i] - sample_min[i],
+              sqrt(sample_variance[i]),
+              sample_mean[i],
+              sample_CV[i]);
     }
 
-    pass();
-    return;
-
-FAILURE:
-    fail();
+    std::string passed, failed;
+    bool hasFailed = false;
+    for (int i = 0; i < Frame::kFiltedSize; i++) {
+        passed += (channel_ok[i] ? format_string("%d", (i+1)) : format_string(" "));
+        failed += (channel_ok[i] ? format_string(" ") : format_string("%d", (i+1)));
+        if (!channel_ok[i]) {
+            hasFailed = true;
+        }
+    }
+    result("PASSED:" + passed);
+    if (hasFailed) {
+        result(result() + "\nFAILED:" + failed);
+        fail();
+    } else {
+        pass();
+    }
 }
 
 static const int kBarGap = 5;
@@ -236,6 +260,7 @@ static const color_t neg_color = {0x00, 0xff, 0xff, 0xff};
 void MicTest::Draw()
 {
     if (bg_rect.x == 0) {
+        UiTest::Draw();
         bg_rect.x = (gr_fb_width() - bg_rect.w) / 2;
         bg_rect.y = (gr_fb_height() - bg_rect.h) / 2;
     }
@@ -266,14 +291,12 @@ void MicTest::Draw()
         for (size_t i = 0; i < frame.values_.size(); i++) {
             auto val = frame.values_[i];
 
-            // statics counting
-            double x = val; // Frame::normalize(val);
+            // statistics counting
+            double x = (Frame::normalize(val) + 1.0) * kNormalScalar;
             sample_sum[i] += x;
             sample_max[i] = std::max(x, sample_max[i]);
             sample_min[i] = std::min(x, sample_min[i]);
             sample_2sum[i] += x * x;
-            sample_mean[i] = sample_sum[i] / sample_count;
-            sample_variance[i] = (sample_2sum[i] + sample_mean[i] * sample_mean[i]) / sample_count;
 
             // calculate bars
             rect_t rect;
