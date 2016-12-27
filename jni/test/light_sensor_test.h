@@ -8,10 +8,10 @@
 #include "../ui_test.h"
 #include "../blocking_queue.h"
 
-class LightSensorTest : public UiTest
+class LightSensorTest : public UiUserJudgeTest
 {
 public:
-    UITEST_ENTRY(LightSensorTest) {}
+    USER_JUDGE_TEST_ENTRY(LightSensorTest) {}
 private:
     void OnEnter();
 
@@ -21,8 +21,7 @@ private:
 
     void RunTest();
 
-    static const int kSampleTimes = 5;
-    BlockingQueue<int> values_;
+    void publish_sensor_value(int value);
 };
 
 
