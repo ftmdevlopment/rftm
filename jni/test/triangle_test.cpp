@@ -28,3 +28,8 @@ void TirangleTest::Draw()
     gr_flip();
 }
 
+void TirangleTest::RunTest()
+{
+    sleep(5);
+}
+

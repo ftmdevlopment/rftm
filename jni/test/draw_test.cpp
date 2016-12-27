@@ -27,3 +27,7 @@ void DrawTest::Draw()
 
     gr_flip();
 }
+
+void DrawTest::RunTest() {
+    sleep(5);
+}

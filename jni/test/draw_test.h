@@ -14,6 +14,8 @@ public:
 
 private:
     void Draw();
+
+    void RunTest();
 };
 
 

@@ -15,6 +15,8 @@ public:
 private:
     void Draw();
 
+    void RunTest();
+
     int radius_;
     triangle_t triangle_;
 };
