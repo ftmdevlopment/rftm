@@ -20,6 +20,7 @@ void FanTest::RunTest()
 
     clear_judge_result();
     wait_for_judge_result();
+    result("");
     clear_judge_result();
 }
 
