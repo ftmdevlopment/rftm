@@ -53,6 +53,7 @@ void SpeakerTest::RunTest()
 
     result("PASS/FAIL?");
     wait_for_judge_result();
+    result("");
 
     clear_judge_result();
     return;
