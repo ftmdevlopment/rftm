@@ -39,6 +39,10 @@ protected:
 private:
     void draw_main();
 
+    void save_results();
+
+    void load_results();
+
 private:
     color_t bg_color = {0x00, 0x00, 0x00, 0xff};
     color_t border_color = {0xb0, 0x00, 0x00, 0xff};

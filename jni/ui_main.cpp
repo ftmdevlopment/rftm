@@ -4,6 +4,8 @@
 
 #include <math.h>
 #include <stdio.h>
+#include <sys/stat.h>
+#include <sstream>
 
 #include "log.h"
 #include "utils.h"
@@ -29,6 +31,8 @@
 #include "test/camera_test.h"
 
 using qrcodegen::QrCode;
+
+static const std::string kResultDirectory = "/data/local/tmp/ftm_results";
 
 static const char* kVersion = FTM_VERSION;
 
@@ -200,11 +204,7 @@ UiMain::UiMain()
         case_colors[i] = &empty_color;
     }
 
-    printf("border_radius: %d\n", border_radius);
-    printf("gap_radius: %d\n", gap_radius);
-    printf("main_radius: %d\n", main_radius);
-    printf("case_radius: %d\n", case_radius);
-    printf("case_center_radius: %d\n", case_center_radius);
+    load_results();
 }
 
 UiMain::~UiMain()
@@ -290,16 +290,88 @@ void UiMain::OnKey(int code, int value)
 
 void UiMain::OnAlarm()
 {
-    XLOGI("alarm %ld", clock());
-    set_alarm(1);
+    static Timer timer;
+    XLOGI("alarm %.3f", timer.elapsed());
+    set_alarm(10);
 }
 
 void UiMain::OnEnter()
 {
     XLOGI("enter %p", this);
+    save_results();
 }
 
 void UiMain::OnLeave()
 {
     XLOGI("leave %p", this);
+}
+
+void UiMain::save_results()
+{
+#if 1
+    for (std::string::size_type pos = 0, last = 0;
+         pos != std::string::npos;) {
+        last = pos + 1;
+        pos = kResultDirectory.find('/', last);
+        std::string dir = kResultDirectory.substr(0, pos);
+        if (!file_exists(dir.c_str())) {
+            XLOGD("mkdir %s", dir.c_str());
+            if (mkdir(dir.c_str(), S_IRWXU | S_IRWXG | S_IRWXO) != 0) {
+                XLOGE("mkdir %s, failed: %s", dir.c_str(), strerror(errno));
+            }
+        }
+    }
+#else
+    if (!file_exists(kResultDirectory.c_str())) {
+        std::string out;
+        run_command("mkdir -p " + kResultDirectory, &out);
+        XLOGI("mkdir -p %s", kResultDirectory.c_str());
+    }
+#endif
+
+    for (int i = 0; i < kCases; i++) {
+        if (tests_[i]->state() != UiTest::TS_INIT) {
+            std::string filename, content;
+            content += format_string("name: %s\n", tests_[i]->name());
+            content += format_string("state: %d %s\n", tests_[i]->state(), tests_[i]->state_str());
+            content += format_string("result: %s", tests_[i]->result().c_str());
+            filename = format_string("%s/%d.txt", kResultDirectory.c_str(), i);
+            if (write_file(filename.c_str(), content) < 0) {
+                XLOGE("write %s failed, %s", filename.c_str(), strerror(errno));
+            }
+            XLOGI("saved %s, content: `%s`", filename.c_str(), content.c_str());
+        }
+    }
+}
+
+void UiMain::load_results()
+{
+    if (!file_exists(kResultDirectory.c_str())) {
+        return;
+    }
+
+    for (int i = 0; i < kCases; i++) {
+        std::string filename, content;
+        filename = format_string("%s/%d.txt", kResultDirectory.c_str(), i);
+        if (!file_exists(filename.c_str())
+            || read_file(filename.c_str(), &content) < 0) {
+            XLOGE("load test %d failed", i);
+            continue;
+        }
+
+        auto pos = content.find("state: ");
+        if (pos != std::string::npos) {
+            int state = UiTest::TS_INIT;
+            std::stringstream ls(content.substr(pos + sizeof("state: ")-1));
+            ls >> state;
+            tests_[i]->state(state);
+            XLOGI("load test %d state: %s", i, tests_[i]->state_str());
+        }
+
+        pos = content.find("result: ");
+        if (pos != std::string::npos) {
+            tests_[i]->result(content.substr(pos + sizeof("result: ")-1));
+            XLOGI("load test %d result: `%s`", i, tests_[i]->result().c_str());
+        }
+    }
 }
