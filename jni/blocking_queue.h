@@ -8,7 +8,7 @@
 #include <queue>
 #include <vector>
 #include <pthread.h>
-#include "socped_lock.h"
+#include "scoped_lock.h"
 
 template <typename T>
 class BlockingQueue
