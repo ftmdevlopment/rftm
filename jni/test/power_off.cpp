@@ -3,6 +3,7 @@
 //
 
 #include "power_off.h"
+#include <stdlib.h>
 
 void PowerOff::RunTest()
 {

@@ -4,6 +4,8 @@
 
 #include "triangle_test.h"
 
+#include <math.h>
+
 TirangleTest::TirangleTest(UiBase* main, const char* name)
     : UiTest(main, name)
 {

@@ -3,6 +3,7 @@
 //
 
 #include <fcntl.h>
+#include <stdlib.h>
 #include "ui_main.h"
 
 int main(int argc, char** argv)

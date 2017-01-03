@@ -5,6 +5,8 @@
 #include "mem_test.h"
 #include "../timer.h"
 
+#include <stdlib.h>
+
 static const int MEGA = 1024 * 1024;
 static const int PAGE = 4096;
 

@@ -4,6 +4,8 @@
 
 #include "fan_test.h"
 
+#include <stdlib.h>
+
 void FanTest::RunTest()
 {
     sleep(1);

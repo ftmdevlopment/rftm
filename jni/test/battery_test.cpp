@@ -4,6 +4,8 @@
 
 #include "battery_test.h"
 
+#include <stdlib.h>
+
 #define BATTERY_PRESENT "/sys/class/power_supply/battery/present"
 #define CHARGER_ONLINE    "/sys/class/power_supply/ac/online"
 #define VOLTAGE_PATH    "/sys/class/power_supply/battery/voltage_now"

@@ -7,6 +7,7 @@
 
 #include <tinyalsa/asoundlib.h>
 #include <assert.h>
+#include <math.h>
 
 static bool show_frame_queue_size = false;
 
