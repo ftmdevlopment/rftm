@@ -7,7 +7,7 @@
 void DlpTest::Draw()
 {
     std::string img;
-    if (show_.peek(&img)) {
+    if (display_queue_.peek(&img)) {
         XLOGI("got %s", img.c_str());
         gr_color(0, 0, 0, 255); gr_clear();
         fill_image(gr_fb_height()/2, gr_fb_height()/2, img.c_str());
@@ -17,11 +17,6 @@ void DlpTest::Draw()
 
 void DlpTest::RunTest()
 {
-    current_displayed_ = 0;
-
-    scan_images();
-    next_image();
-
     clear_judge_result();
     wait_for_judge_result();
 
@@ -30,17 +25,12 @@ void DlpTest::RunTest()
 
 void DlpTest::scan_images()
 {
-    {
-        ScopedLock lock(&mutex_);
-        if (images_.size() > 0) return;
-    }
-
 #ifdef FTM_IMG_PATH
     std::string dir = FTM_IMG_PATH;
 #else  // FTM_IMG_PATH
     std::string dir = "/data/local/tmp/";
 #endif  // FTM_IMG_PATH
-    std::vector<std::string> vec, out;
+    std::vector<std::string> vec;
     list_directory(&vec, dir.c_str());
 
     std::sort(vec.begin(), vec.end());
@@ -52,21 +42,17 @@ void DlpTest::scan_images()
         auto pos = str.find(keyword);
         return pos != str.npos && pos + keyword.size() == str.size();
     };
-    for (auto& s: vec) {
-        XLOGI("scan %s ...", s.c_str());
+
+    for_each(vec.begin(), vec.end(), [&](std::string& s) {
         if (start_with(s, "dlp_")  // start with dlp_
             && end_with(s, ".png")) { // end with .png
-            std::string base = s.substr(0, s.find_last_of('.'));
-            XLOGI("found img %s", base.c_str());
-            out.push_back(base);
+            s = s.substr(0, s.find_last_of('.'));
+            XLOGI("found img %s", s.c_str());
         }
-    }
+    });
 
-    {
-        ScopedLock lock(&mutex_);
-        images_.swap(out);
-        XLOGI("size: %d", images_.size());
-    }
+    images_.swap(vec);
+    XLOGI("images: %d", images_.size());
 }
 
 void DlpTest::OnRightTouch(int value)
@@ -82,22 +68,27 @@ void DlpTest::OnRightTouch(int value)
 
 void DlpTest::next_image()
 {
-    std::string img;
-    {
-        ScopedLock lock(&mutex_);
-        if (current_displayed_ < images_.size()) {
-            img = images_[current_displayed_];
+    if (queued_image_index_ < images_.size()) {
+        std::string img = images_[queued_image_index_];
+        if (img.size() > 0) {
             XLOGI("put %s", img.c_str());
-            current_displayed_++;
+            display_queue_.put(img);
         }
-    }
-    if (img.size() > 0) {
-        show_.put(img);
+        queued_image_index_++;
     }
 }
 
 bool DlpTest::has_next_image()
 {
-    ScopedLock lock(&mutex_);
-    return current_displayed_ < images_.size();
+    return queued_image_index_ < images_.size();
+}
+
+void DlpTest::OnEnter()
+{
+    UiTest::OnEnter();
+
+    scan_images();
+    queued_image_index_ = 0;
+
+    next_image();
 }

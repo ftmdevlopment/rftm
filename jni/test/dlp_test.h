@@ -11,16 +11,12 @@
 class DlpTest : public UiUserJudgeTest
 {
 public:
-    USER_JUDGE_TEST_ENTRY(DlpTest) {
-        pthread_mutex_init(&mutex_, NULL);
-    }
-
-    ~DlpTest() {
-        pthread_mutex_destroy(&mutex_);
-    }
+    USER_JUDGE_TEST_ENTRY(DlpTest) {}
 
 private:
     void Draw();
+
+    void OnEnter();
 
     void OnRightTouch(int value);
 
@@ -32,11 +28,9 @@ private:
 
     bool has_next_image();
 
-    static const int kDiplayTime = 2;
-    BlockingQueue<std::string> show_;
     std::vector<std::string> images_;
-    int current_displayed_;
-    pthread_mutex_t mutex_;
+    int queued_image_index_;
+    BlockingQueue<std::string> display_queue_;
 };
 
 
