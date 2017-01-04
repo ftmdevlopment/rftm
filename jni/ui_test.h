@@ -81,6 +81,21 @@ private:
 #define UITEST_ENTRY(Class) \
     Class(UiBase* main, const char* name) : UiTest(main, name)
 
+class UiAutoJudgeTest : public UiTest
+{
+public:
+    UITEST_ENTRY(UiAutoJudgeTest) {}
+
+    void OnKey(int code, int value) {}
+
+    void OnLeftTouch(int value) {}
+
+    void OnRightTouch(int value) {}
+};
+
+#define AUTO_JUDGE_TEST_ENTRY(Class) \
+    Class(UiBase* main, const char* name) : UiAutoJudgeTest(main, name)
+
 class UiUserJudgeTest : public UiTest
 {
 protected:

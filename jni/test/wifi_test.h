@@ -7,10 +7,10 @@
 
 #include "../ui_test.h"
 
-class WifiTest : public UiTest
+class WifiTest : public UiAutoJudgeTest
 {
 public:
-    UITEST_ENTRY(WifiTest) {}
+    AUTO_JUDGE_TEST_ENTRY(WifiTest) {}
 
 private:
     void RunTest();

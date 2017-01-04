@@ -7,10 +7,10 @@
 
 #include "../ui_test.h"
 
-class VersionTest : public UiTest
+class VersionTest : public UiAutoJudgeTest
 {
 public:
-    UITEST_ENTRY(VersionTest) {}
+    AUTO_JUDGE_TEST_ENTRY(VersionTest) {}
 
 private:
     void RunTest();

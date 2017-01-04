@@ -7,10 +7,10 @@
 
 #include "../ui_test.h"
 
-class FtmExit : public UiTest
+class FtmExit : public UiAutoJudgeTest
 {
 public:
-    UITEST_ENTRY(FtmExit) {}
+    AUTO_JUDGE_TEST_ENTRY(FtmExit) {}
 
 private:
     void RunTest();

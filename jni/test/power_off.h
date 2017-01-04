@@ -7,10 +7,10 @@
 
 #include "../ui_test.h"
 
-class PowerOff : public UiTest
+class PowerOff : public UiAutoJudgeTest
 {
 public:
-    UITEST_ENTRY(PowerOff) {}
+    AUTO_JUDGE_TEST_ENTRY(PowerOff) {}
 
 private:
     void RunTest();

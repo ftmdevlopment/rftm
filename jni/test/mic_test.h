@@ -7,10 +7,10 @@
 
 #include "../ui_test.h"
 
-class MicTest : public UiTest
+class MicTest : public UiAutoJudgeTest
 {
 public:
-    UITEST_ENTRY(MicTest) { }
+    AUTO_JUDGE_TEST_ENTRY(MicTest) { }
 
 private:
     void Draw();

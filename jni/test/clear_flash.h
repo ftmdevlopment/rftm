@@ -7,10 +7,10 @@
 
 #include "../ui_test.h"
 
-class ClearFlash : public UiTest
+class ClearFlash : public UiAutoJudgeTest
 {
 public:
-    UITEST_ENTRY(ClearFlash) {}
+    AUTO_JUDGE_TEST_ENTRY(ClearFlash) {}
 
 private:
     void RunTest();
