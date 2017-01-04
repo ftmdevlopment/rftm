@@ -260,10 +260,9 @@ static const color_t neg_color = {0x00, 0xff, 0xff, 0xff};
 
 void MicTest::Draw()
 {
-    if (bg_rect.x == 0) {
+    if (first_frame_) {
         UiTest::Draw();
-        bg_rect.x = (gr_fb_width() - bg_rect.w) / 2;
-        bg_rect.y = (gr_fb_height() - bg_rect.h) / 2;
+        first_frame_ = false;
     }
 
     if (show_frame_queue_size) {
@@ -321,4 +320,16 @@ void MicTest::Draw()
         sample_count++;
     }
     gr_flip();
+}
+
+void MicTest::OnEnter()
+{
+    UiTest::OnEnter();
+
+    first_frame_ = true;
+
+    if (bg_rect.x == 0) {
+        bg_rect.x = (gr_fb_width() - bg_rect.w) / 2;
+        bg_rect.y = (gr_fb_height() - bg_rect.h) / 2;
+    }
 }

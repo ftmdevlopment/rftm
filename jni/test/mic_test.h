@@ -13,6 +13,9 @@ public:
     AUTO_JUDGE_TEST_ENTRY(MicTest) { }
 
 private:
+    bool first_frame_;
+    void OnEnter();
+
     void Draw();
 
     void RunTest();
