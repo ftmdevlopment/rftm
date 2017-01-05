@@ -7,12 +7,16 @@
 
 #include "../ui_test.h"
 
-class ClearFlash : public UiAutoJudgeTest
+class ClearFlash : public UiUserJudgeTest
 {
 public:
-    AUTO_JUDGE_TEST_ENTRY(ClearFlash) {}
+    USER_JUDGE_TEST_ENTRY(ClearFlash) {}
 
 private:
+    void OnLeftTouch(int value);
+
+    void OnRightTouch(int value);
+
     void RunTest();
 };
 

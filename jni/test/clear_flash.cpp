@@ -8,11 +8,18 @@ void ClearFlash::RunTest()
 {
     std::string out, userdata, cache;
 
+    result("touch right to confirm");
+
+    clear_judge_result();
+    wait_for_judge_result();
+
 #define EXEC(cmd) \
     do { \
         run_command(cmd, &out); \
         if (out.find("not found") != out.npos) { \
-            goto FAILURE; \
+            fail(); \
+            clear_judge_result();\
+            return; \
         } \
     } while (0)
 
@@ -39,9 +46,19 @@ void ClearFlash::RunTest()
 #undef EXEC
 
     pass();
-    return;
+    clear_judge_result();
+}
 
-FAILURE:
-    fail();
+void ClearFlash::OnRightTouch(int value)
+{
+    if (value != 0x8 && value != 0x10) {
+        return;
+    }
+    UiUserJudgeTest::OnRightTouch(value);
+}
+
+void ClearFlash::OnLeftTouch(int value)
+{
+    XLOGI("ignore the left touch events %x", value);
 }
 
