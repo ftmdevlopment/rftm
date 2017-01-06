@@ -4,6 +4,7 @@
 
 #include <math.h>
 #include <stdio.h>
+#include <errno.h>
 #include <sys/stat.h>
 #include <sstream>
 
@@ -374,4 +375,13 @@ void UiMain::load_results()
             XLOGI("load test %d result: `%s`", i, tests_[i]->result().c_str());
         }
     }
+}
+
+void UiMain::clear_results()
+{
+    if (file_exists(kResultDirectory.c_str())) {
+        std::string out;
+        run_command("rm -rf " + kResultDirectory, &out);
+    }
+    load_results();
 }

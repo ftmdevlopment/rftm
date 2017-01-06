@@ -43,6 +43,9 @@ private:
 
     void load_results();
 
+public:
+    void clear_results();
+
 private:
     color_t bg_color = {0x00, 0x00, 0x00, 0xff};
     color_t border_color = {0xa0, 0x00, 0x00, 0xff};

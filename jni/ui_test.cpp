@@ -8,6 +8,7 @@
 
 #include "ui_test.h"
 #include "minui/minui.h"
+#include "ui_main.h"
 
 #define msleep(n) usleep((n) * 1000)
 
@@ -143,6 +144,14 @@ void UiTest::wait()
 void UiTest::back()
 {
     SetCurrentUI(main_);
+}
+
+void UiTest::clear_results()
+{
+    UiMain* main = dynamic_cast<UiMain*>(main_);
+    if (main) {
+        main->clear_results();
+    }
 }
 
 bool UiTest::in_left_filer(int value)

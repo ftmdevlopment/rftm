@@ -66,6 +66,8 @@ protected:
 
     void back();
 
+    void clear_results();
+
 private:
     static void* do_test(void*);
 
