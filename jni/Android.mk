@@ -80,6 +80,7 @@ LOCAL_SRC_FILES := \
     test/ftm_exit.cpp \
     test/mic_test.cpp \
     test/camera_test.cpp \
+    test/dlp_age_test.cpp \
 
 LOCAL_CPP_FEATURES := exceptions
 

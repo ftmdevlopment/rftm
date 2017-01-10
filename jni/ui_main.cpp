@@ -30,6 +30,7 @@
 #include "test/ftm_exit.h"
 #include "test/mic_test.h"
 #include "test/camera_test.h"
+#include "test/dlp_age_test.h"
 
 using qrcodegen::QrCode;
 
@@ -197,6 +198,7 @@ UiMain::UiMain()
     tests_[count++] = new SpeakerTest(this, "Speaker test");
     tests_[count++] = new MicTest(this, "Mic test");
     tests_[count++] = new BatteryTest(this, "Battery test");
+    tests_[count++] = new DlpAgeTest(this, "DLP age test");
     tests_[count++] = new ClearFlash(this, "Clear flash");
     tests_[count++] = new FtmExit(this, "FTM exit");
     tests_[count++] = new PowerOff(this, "Power off");
