@@ -11,7 +11,6 @@ void KeyTest::OnEnter()
 {
     UiTest::OnEnter();
     top_ = kNoMark;
-    rear_ = kNoMark;
     left_ = std::string(kValues, kNoMark);
     right_ = std::string(kValues, kNoMark);
     time_left_ = kTestSeconds;
@@ -35,15 +34,12 @@ bool KeyTest::check()
             return false;
         }
     }
-    return top_ != kNoMark && rear_ != kNoMark;
+    return top_ != kNoMark;
 }
 
 void KeyTest::OnKey(int code, int value)
 {
     XLOGI("%s %d %d\n", __func__, code, value);
-    if (code == KEY_POWER) {
-        rear_ = kMarked;
-    }
     if (code == KEY_OK) {
         top_ = kMarked;
     }
@@ -79,14 +75,13 @@ void KeyTest::update_and_check_result()
     result("L:" + left_ + "\n"
            + "R:" + right_ + "\n"
            + "Top:" + top_ + "\n"
-           + "Power:" + rear_ + "\n"
            + format_string("time left: %ds", time_left_));
     if (check()) {
         if (time_left_ > 0) {
             result("L:" + left_ + "\n"
                    + "R:" + right_ + "\n"
                    + "Top:" + top_ + "\n"
-                   + "Power:" + rear_ + "\n");
+            );
             time_left_ = 0;
         }
         pass();

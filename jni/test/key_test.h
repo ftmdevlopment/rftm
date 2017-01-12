@@ -36,7 +36,6 @@ private:
     std::string left_;
     std::string right_;
     char top_;
-    char rear_;
     int time_left_;  // for some key FAILED
 };
 
