@@ -7,13 +7,17 @@
 
 #include "../ui_test.h"
 
-class DlpAgeTest : public UiAutoJudgeTest
+class DlpAgeTest : public UiUserJudgeTest
 {
 public:
-    AUTO_JUDGE_TEST_ENTRY(DlpAgeTest) {}
+    USER_JUDGE_TEST_ENTRY(DlpAgeTest) {}
 
 private:
     void RunTest();
+
+    void OnKey(int code, int value);
+
+    BlockingQueue<bool> cancel_;
 };
 
 
