@@ -43,19 +43,15 @@ void DlpTest::scan_images()
         return pos != str.npos && pos + keyword.size() == str.size();
     };
 
-    std::for_each(vec.begin(), vec.end(), [&](std::string& s) {
+    images_.clear();
+    std::for_each(vec.begin(), vec.end(), [&](const std::string& s) {
         if (start_with(s, "dlp_")  // start with dlp_
             && end_with(s, ".png")) { // end with .png
-            s = s.substr(0, s.find_last_of('.'));
-            XLOGI("found img %s", s.c_str());
+            auto img = s.substr(0, s.find_last_of('.'));
+            images_.push_back(img);
+            XLOGI("found img %s", img.c_str());
         }
     });
-
-    std::remove_if(vec.begin(), vec.end(), [](std::string& s) {
-        return s.size() == 0 || (s.size() && s[0] == '.');
-    });
-
-    images_.swap(vec);
     XLOGI("images: %d", images_.size());
 }
 
