@@ -169,7 +169,7 @@ void UiUserJudgeTest::clear_judge_result()
     judge_result_.clear();
 }
 
-void UiUserJudgeTest::wait_for_judge_result()
+bool UiUserJudgeTest::wait_for_judge_result()
 {
     ready_ = true;
 
@@ -179,6 +179,7 @@ void UiUserJudgeTest::wait_for_judge_result()
     } else {
         fail();
     }
+    return result;
 }
 
 void UiUserJudgeTest::OnLeftTouch(int value)

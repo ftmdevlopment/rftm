@@ -105,7 +105,7 @@ protected:
 
     void clear_judge_result();
 
-    void wait_for_judge_result();
+    bool wait_for_judge_result();
 
     void OnLeftTouch(int value);
 
