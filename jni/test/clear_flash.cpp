@@ -8,10 +8,15 @@ void ClearFlash::RunTest()
 {
     std::string out, userdata, cache;
 
-    result("touch right to confirm");
+    result("confirm/cancel ?");
 
     clear_judge_result();
-    wait_for_judge_result();
+    if (!wait_for_judge_result()) {
+        XLOGI("action canceled!");
+        result("");
+        state(TS_TESTING);
+        return;
+    }
 
 #define EXEC(cmd) \
     do { \
@@ -29,17 +34,17 @@ void ClearFlash::RunTest()
     result("clear /data...");
     EXEC("make_ext4fs " + userdata);
     if (out.find("Created filesystem with") != out.npos) {
-        result("clear /data done");
+        append("clear /data done");
     }
     sleep(2);
 
     EXEC("mount | grep cache | cut -d' ' -f1");
     cache = trim_string(out);
 
-    result("clear /cache...");
+    append("clear /cache...");
     EXEC("make_ext4fs " + cache);
     if (out.find("Created filesystem with") != out.npos) {
-        result("clear /cache done");
+        append("clear /cache done");
     }
     sleep(2);
 
@@ -59,6 +64,14 @@ void ClearFlash::OnRightTouch(int value)
 
 void ClearFlash::OnLeftTouch(int value)
 {
-    XLOGI("ignore the left touch events %x", value);
+    if (value != 0x8 && value != 0x10) {
+        return;
+    }
+    UiUserJudgeTest::OnLeftTouch(value);
+}
+
+void ClearFlash::append(std::string txt)
+{
+    result(result() + "\n" + txt);
 }
 

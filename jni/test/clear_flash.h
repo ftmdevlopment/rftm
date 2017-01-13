@@ -18,6 +18,8 @@ private:
     void OnRightTouch(int value);
 
     void RunTest();
+
+    void append(std::string txt);
 };
 
 
