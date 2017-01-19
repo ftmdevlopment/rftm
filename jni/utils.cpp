@@ -7,6 +7,7 @@
 #include <math.h>
 #include <ctype.h>
 #include <string.h>
+#include <map>
 
 #include "utils.h"
 #include "minui/minui.h"
@@ -33,6 +34,142 @@ void set_color(const color_t* c)
     gr_color(c->r, c->g, c->b, c->a);
 }
 
+
+static inline double dc(double r, double y)
+{
+    double x = sqrt(r*r - y*y);
+    return ceil(x) - x;
+}
+
+static inline void draw_pixel(int x, int y)
+{
+    gr_fill(x, y, x+1, y+1);
+}
+
+// use Xiaolin Wu's Algoritm for anti-aliasing.
+// https://en.wikipedia.org/wiki/Xiaolin_Wu%27s_line_algorithm
+void draw_circle(const color_t *c, int x0, int y0, int r)
+{
+    if (r <= 0) return;
+
+    double d = 0.0;
+    int y = 0, x = r;
+    while (x > y) {
+        double dx = dc(r, y);
+        if (dx < d) x--;
+
+        // Octant labelling
+        //
+        //  \ 5 | 6 /
+        //   \  |  /
+        //  4 \ | / 7
+        //     \|/
+        //------+------ +x
+        //     /|\
+        //  3 / | \ 0
+        //   /  |  \
+        //  / 2 | 1 \
+        //      +y
+
+        // draw outter side
+        gr_color(c->r, c->g, c->b, c->a*(1 - dx));
+        draw_pixel(x0 + x, y0 + y);  // 0
+        draw_pixel(x0 - x, y0 + y);  // 3
+        draw_pixel(x0 - x, y0 - y);  // 4
+        draw_pixel(x0 + x, y0 - y);  // 7
+
+        draw_pixel(x0 + y, y0 + x);  // 1
+        draw_pixel(x0 - y, y0 + x);  // 2
+        draw_pixel(x0 - y, y0 - x);  // 5
+        draw_pixel(x0 + y, y0 - x);  // 6
+
+        // draw inner side
+        gr_color(c->r, c->g, c->b, c->a * dx);
+        draw_pixel(x0 + (x-1), y0 + y);  // 0
+        draw_pixel(x0 - (x-1), y0 + y);  // 3
+        draw_pixel(x0 - (x-1), y0 - y);  // 4
+        draw_pixel(x0 + (x-1), y0 - y);  // 7
+
+        draw_pixel(x0 + y, y0 + (x-1));  // 1
+        draw_pixel(x0 - y, y0 + (x-1));  // 2
+        draw_pixel(x0 - y, y0 - (x-1));  // 5
+        draw_pixel(x0 + y, y0 - (x-1));  // 6
+
+        d = dx;
+        y++;
+    }
+}
+
+// use Xiaolin Wu's Algoritm for anti-aliasing.
+// https://en.wikipedia.org/wiki/Xiaolin_Wu%27s_line_algorithm
+void fill_circle_ex(const color_t* c, int x0, int y0, int r)
+{
+    if (r <= 0) return;
+
+    std::map<int, std::pair<int, int>> xrange;
+
+    double d = 0.0;
+    int y = 0, x = r;
+    while (x > y) {
+        double dx = dc(r, y);
+        if (dx < d) x--;
+
+        // Octant labelling
+        //
+        //  \ 5 | 6 /
+        //   \  |  /
+        //  4 \ | / 7
+        //     \|/
+        //------+------ +x
+        //     /|\
+        //  3 / | \ 0
+        //   /  |  \
+        //  / 2 | 1 \
+        //      +y
+
+        // draw outter side
+        gr_color(c->r, c->g, c->b, c->a*(1 - dx));
+        draw_pixel(x0 + x, y0 + y);  // 0
+        draw_pixel(x0 - x, y0 + y);  // 3
+        draw_pixel(x0 - x, y0 - y);  // 4
+        draw_pixel(x0 + x, y0 - y);  // 7
+
+        draw_pixel(x0 + y, y0 + x);  // 1
+        draw_pixel(x0 - y, y0 + x);  // 2
+        draw_pixel(x0 - y, y0 - x);  // 5
+        draw_pixel(x0 + y, y0 - x);  // 6
+
+        // calculate x rage
+#define EXTEND_XRANGE(px0, px1, py0)                \
+        if (xrange.find(py0) == xrange.end()) {     \
+            xrange[py0] = std::make_pair(px0, px1); \
+        } else {                                    \
+            if ((px0) < xrange[py0].first) {        \
+                xrange[py0].first = (px0);          \
+            }                                       \
+            if ((px1) > xrange[py0].second) {       \
+                xrange[py0].second = (px1);         \
+            }                                       \
+        }
+
+        EXTEND_XRANGE(x0 - x, x0 + x, y0 + y);  // 0 3
+        EXTEND_XRANGE(x0 - x, x0 + x, y0 - y);  // 4 7
+        EXTEND_XRANGE(x0 - y, x0 + y, y0 + x);  // 1 2
+        EXTEND_XRANGE(x0 - y, x0 + y, y0 - x);  // 4 7
+
+#undef EXTEND_XRANGE
+
+        d = dx;
+        y++;
+    }
+
+    // draw inner area
+    gr_color(c->r, c->g, c->b, c->a);
+    for (auto& p: xrange) {
+        gr_fill(p.second.first,      p.first,
+                p.second.second + 1, p.first + 1);
+    }
+}
 
 void fill_circle(int x0, int y0, int radius)
 {

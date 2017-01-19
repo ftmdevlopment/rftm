@@ -63,6 +63,8 @@ void set_color(const color_t* c);
 void fill_text(int x, int y, const char* text, int bold);
 void fill_image(int x, int y, const char* name);
 void fill_circle(int x0, int y0, int radius);
+void fill_circle_ex(const color_t* c, int x0, int y0, int r);
+void draw_circle(const color_t* c, int x0, int y0, int r);
 void fill_ring(int x0, int y0, int r1, int r2);
 void fill_triangle(const triangle_t* t);
 void fill_rect(const rect_t* rect);
