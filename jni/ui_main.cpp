@@ -226,16 +226,13 @@ void UiMain::Draw()
     gr_clear();
 
     // border
-    set_color(&border_color);
-    fill_circle(x0, y0, border_radius);
+    fill_circle_ex(&border_color, x0, y0, border_radius);
 
     // gap
-    set_color(&gap_color);
-    fill_circle(x0, y0, gap_radius);
+    fill_circle_ex(&gap_color, x0, y0, gap_radius);
 
     // main
-    set_color(&main_color);
-    fill_circle(x0, y0, main_radius);
+    fill_circle_ex(&main_color, x0, y0, main_radius);
 
     // QR code
     draw_main();
@@ -243,22 +240,21 @@ void UiMain::Draw()
     // cases
     const point_t* c = case_centers;
     for (int i = 0; i < kCases; i++) {
+        const color_t* color = case_colors[i];
         switch (tests_[i]->state()) {
             case UiTest::TS_PASSED:
-                set_color(&pass_color);
+                color = &pass_color;
                 break;
             case UiTest::TS_FAILED:
-                set_color(&fail_color);
+                color = &fail_color;
                 break;
             case UiTest::TS_TESTING:
-                set_color(&testing_color);
+                color = &testing_color;
                 break;
             default:
-                set_color(case_colors[i]);
                 break;
         }
-
-        fill_circle(c[i].x, c[i].y, case_radius);
+        fill_circle_ex(color, c[i].x, c[i].y, case_radius);
 
         char text[64];
         snprintf(text, sizeof(text), "%d", i+1);
