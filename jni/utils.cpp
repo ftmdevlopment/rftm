@@ -255,6 +255,89 @@ void fill_image(int x, int y, const char* name)
     res_free_surface(pic);
 }
 
+static double fpart(double x)
+{
+    return x < 0 ? 1 - (x - floor(x)) : x - floor(x);
+}
+
+static double rfpart(double x)
+{
+    return round(1.0 - fpart(x));
+}
+
+void draw_line(const color_t *c, int x0, int y0, int x1, int y1)
+{
+    bool steep = abs(y1 - y0) > abs(x1 - x0);
+    if (steep) {
+        std::swap(x0, y0);
+        std::swap(x1, y1);
+    }
+    if (x0 > x1) {
+        std::swap(x0, x1);
+        std::swap(y0, y1);
+    }
+
+    int dx = x1 - x0;
+    int dy = y1 - y0;
+    double gradient = dy / (double)dx;
+
+    double xend = round(x0);
+    double yend = y0 + gradient * (xend - x0);
+    double xgap = rfpart(x0 + 0.5);
+    int xpx1 = xend;
+    int ypx1 = (int) yend;
+
+    // handle first endpoint
+    if (steep) {
+        gr_color(c->r, c->g, c->b, c->a * rfpart(yend) * xgap);
+        draw_pixel(ypx1, xpx1);
+        gr_color(c->r, c->g, c->b, c->a *  fpart(yend) * xgap);
+        draw_pixel(ypx1+1, xpx1);
+    } else {
+        gr_color(c->r, c->g, c->b, c->a * rfpart(yend) * xgap);
+        draw_pixel(xpx1, ypx1);
+        gr_color(c->r, c->g, c->b, c->a *  fpart(yend) * xgap);
+        draw_pixel(xpx1, ypx1+1);
+    }
+    double yinter = yend + gradient;  // first y-intersection
+
+    // handle second endpoint
+    xend = round(x1);
+    yend = y1 + gradient * (xend - x1);
+    xgap = fpart(x1 + 0.5);
+    int xpx2 = xend;
+    int ypx2 = (int) yend;
+    if (steep) {
+        gr_color(c->r, c->g, c->b, c->a * rfpart(yend) * xgap);
+        draw_pixel(ypx2, xpx2);
+        gr_color(c->r, c->g, c->b, c->a *  fpart(yend) * xgap);
+        draw_pixel(ypx2+1, xpx2);
+    } else {
+        gr_color(c->r, c->g, c->b, c->a * rfpart(yend) * xgap);
+        draw_pixel(xpx2, ypx2);
+        gr_color(c->r, c->g, c->b, c->a *  fpart(yend) * xgap);
+        draw_pixel(xpx2, ypx2+1);
+    }
+
+    if (steep) {
+        for (int x = xpx1+1; x < xpx2; x++) {
+            gr_color(c->r, c->g, c->b, c->a * rfpart(yinter));
+            draw_pixel((int) yinter, x);
+            gr_color(c->r, c->g, c->b, c->a *  fpart(yinter));
+            draw_pixel((int) yinter + 1, x);
+            yinter += gradient;
+        }
+    } else {
+        for (int x = xpx1+1; x < xpx2; x++) {
+            gr_color(c->r, c->g, c->b, c->a * rfpart(yinter));
+            draw_pixel(x, (int) yinter);
+            gr_color(c->r, c->g, c->b, c->a *  fpart(yinter));
+            draw_pixel(x, (int) yinter + 1);
+            yinter += gradient;
+        }
+    }
+}
+
 // assume that you stand on P1(your head point to z+), face to P2,
 // this function determines weather P3 on your left side or not.
 static bool onleft(const point_t* p1, const point_t* p2, const point_t* p3)
