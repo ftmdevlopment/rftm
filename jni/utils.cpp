@@ -376,6 +376,14 @@ void fill_triangle(const triangle_t* t)
     }
 }
 
+void fill_triangle_ex(const color_t *c, const triangle_t *t)
+{
+    draw_line(c, t->a.x, t->a.y, t->b.x, t->b.y);
+    draw_line(c, t->a.x, t->a.y, t->c.x, t->c.y);
+    draw_line(c, t->b.x, t->b.y, t->c.x, t->c.y);
+    set_color(c); fill_triangle(t);
+}
+
 void fill_rect(const rect_t* rect)
 {
     if (!rect) return;

@@ -68,6 +68,7 @@ void draw_circle(const color_t* c, int x0, int y0, int r);
 void draw_line(const color_t* c, int x0, int y0, int x1, int y1);
 void fill_ring(int x0, int y0, int r1, int r2);
 void fill_triangle(const triangle_t* t);
+void fill_triangle_ex(const color_t *c, const triangle_t *t);
 void fill_rect(const rect_t* rect);
 
 bool in_triangle(const triangle_t* t, int x, int y);
