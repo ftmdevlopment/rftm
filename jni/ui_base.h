@@ -41,6 +41,7 @@ public:
     // for common settings init:
     static void SetIgnoreRelease(bool);
     static void SetExpectedFPS(int);
+    static int GetExpectedFPS();
 
     // for runtime usage:
     static void SetRunning(bool);

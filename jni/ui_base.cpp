@@ -63,6 +63,11 @@ void UiBase::SetExpectedFPS(int fps)
     s_fps_expected = fps;
 }
 
+int UiBase::GetExpectedFPS()
+{
+    return s_fps_expected;
+}
+
 void UiBase::SetRunning(bool running)
 {
     s_running = running;
@@ -246,7 +251,6 @@ void UiBase::run()
     UiBase::SetCurrentUI(this);
     // main thread draw frames, merge and handle events etc ...
     struct timespec ts_start, ts_end;
-    long expected_cost_us = US_PER_S / s_fps_expected;
 
     while (s_running) {
         clock_gettime(CLOCK_REALTIME, &ts_start);
@@ -322,6 +326,7 @@ void UiBase::run()
 
         long cost_us = diff_timespec_us(&ts_end, &ts_start);
         last_frame_cost_ = cost_us;
+        long expected_cost_us = US_PER_S / s_fps_expected;
         long pad = expected_cost_us - cost_us;
         while (pad < 0) pad += expected_cost_us;
 //        XLOGI("frame cost actual: %06d, expected %06d, pad: %06d", cost_us, expected_cost_us, pad);
