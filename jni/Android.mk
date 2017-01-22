@@ -63,8 +63,6 @@ LOCAL_SRC_FILES := \
     qrcode/BitBuffer.cpp \
     qrcode/QrSegment.cpp \
     qrcode/QrCode.cpp \
-    test/draw_test.cpp \
-    test/triangle_test.cpp \
     test/version_test.cpp \
     test/fan_test.cpp \
     test/key_test.cpp \
