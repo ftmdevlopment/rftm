@@ -17,13 +17,14 @@ void DrawCircleTest::Draw()
     int x0 = W/2, y0 = H/2;
     int R = std::min(x0, y0);
 
-    int N = 9, lastR = 0;
+    int N = 9;
+    std::vector<int> rs;
     for (int i = 0, r = R/N; i < N-1; i++, r += R/N) {
         draw_circle(&line_color, x0, y0, r);
-        lastR = r;
+        rs.push_back(r);
     }
 
-    fill_circle_ex(&fill_color, x0, y0, lastR - R/N);
+    fill_circle_ex(&fill_color, x0, y0, (rs.size() >= 2 ? rs[rs.size() - 2] : rs.back()) - R/N/2);
 
     gr_flip();
 }
