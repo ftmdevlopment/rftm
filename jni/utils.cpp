@@ -262,7 +262,7 @@ static double fpart(double x)
 
 static double rfpart(double x)
 {
-    return round(1.0 - fpart(x));
+    return 1.0 - fpart(x);
 }
 
 void draw_line(const color_t *c, int x0, int y0, int x1, int y1)
@@ -283,20 +283,19 @@ void draw_line(const color_t *c, int x0, int y0, int x1, int y1)
 
     double xend = round(x0);
     double yend = y0 + gradient * (xend - x0);
-    double xgap = rfpart(x0 + 0.5);
     int xpx1 = xend;
     int ypx1 = (int) yend;
 
     // handle first endpoint
     if (steep) {
-        gr_color(c->r, c->g, c->b, c->a * rfpart(yend) * xgap);
+        gr_color(c->r, c->g, c->b, c->a * rfpart(yend));
         draw_pixel(ypx1, xpx1);
-        gr_color(c->r, c->g, c->b, c->a *  fpart(yend) * xgap);
+        gr_color(c->r, c->g, c->b, c->a *  fpart(yend));
         draw_pixel(ypx1+1, xpx1);
     } else {
-        gr_color(c->r, c->g, c->b, c->a * rfpart(yend) * xgap);
+        gr_color(c->r, c->g, c->b, c->a * rfpart(yend));
         draw_pixel(xpx1, ypx1);
-        gr_color(c->r, c->g, c->b, c->a *  fpart(yend) * xgap);
+        gr_color(c->r, c->g, c->b, c->a *  fpart(yend));
         draw_pixel(xpx1, ypx1+1);
     }
     double yinter = yend + gradient;  // first y-intersection
@@ -304,18 +303,18 @@ void draw_line(const color_t *c, int x0, int y0, int x1, int y1)
     // handle second endpoint
     xend = round(x1);
     yend = y1 + gradient * (xend - x1);
-    xgap = fpart(x1 + 0.5);
+
     int xpx2 = xend;
     int ypx2 = (int) yend;
     if (steep) {
-        gr_color(c->r, c->g, c->b, c->a * rfpart(yend) * xgap);
+        gr_color(c->r, c->g, c->b, c->a * rfpart(yend));
         draw_pixel(ypx2, xpx2);
-        gr_color(c->r, c->g, c->b, c->a *  fpart(yend) * xgap);
+        gr_color(c->r, c->g, c->b, c->a *  fpart(yend));
         draw_pixel(ypx2+1, xpx2);
     } else {
-        gr_color(c->r, c->g, c->b, c->a * rfpart(yend) * xgap);
+        gr_color(c->r, c->g, c->b, c->a * rfpart(yend));
         draw_pixel(xpx2, ypx2);
-        gr_color(c->r, c->g, c->b, c->a *  fpart(yend) * xgap);
+        gr_color(c->r, c->g, c->b, c->a *  fpart(yend));
         draw_pixel(xpx2, ypx2+1);
     }
 
