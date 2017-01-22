@@ -263,8 +263,7 @@ void UiMain::Draw()
     }
 
     // arrow
-    set_color(&arrow_color);
-    fill_triangle(&arrow_places[focus_case_id]);
+    fill_triangle_ex(&arrow_color, &arrow_places[focus_case_id]);
 
     gr_flip();
 }
