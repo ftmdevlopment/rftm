@@ -7,19 +7,28 @@
 
 #include "../ui_test.h"
 
-class TirangleTest : public UiTest
+class TriangleTest : public UiTest
 {
 public:
-    TirangleTest(UiBase* main, const char* name);
+    TriangleTest(UiBase* main, const char* name);
 
 private:
+    void OnEnter();
+
+    void OnLeave();
+
     void Draw();
 
     void RunTest();
 
-    int radius_;
-    triangle_t triangle_;
-};
+    int origin_fps_;
 
+    int radius_;
+
+    triangle_t T0;
+    static const int N = 12;
+    triangle_t triangles_[N];
+    static const int edge_length_ = 20;
+};
 
 #endif //RFTM_TRIANGLE_TEST_H
