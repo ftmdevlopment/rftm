@@ -152,10 +152,10 @@ void fill_circle_ex(const color_t* c, int x0, int y0, int r)
             }                                       \
         }
 
-        EXTEND_XRANGE(x0 - x, x0 + x, y0 + y);  // 0 3
-        EXTEND_XRANGE(x0 - x, x0 + x, y0 - y);  // 4 7
-        EXTEND_XRANGE(x0 - y, x0 + y, y0 + x);  // 1 2
-        EXTEND_XRANGE(x0 - y, x0 + y, y0 - x);  // 4 7
+        EXTEND_XRANGE(x0 - (x-1), x0 + (x-1), y0 + y);  // 0 3
+        EXTEND_XRANGE(x0 - (x-1), x0 + (x-1), y0 - y);  // 4 7
+        EXTEND_XRANGE(x0 - y,     x0 + y,     y0 + (x-1));  // 1 2
+        EXTEND_XRANGE(x0 - y,     x0 + y,     y0 - (x-1));  // 5 6
 
 #undef EXTEND_XRANGE
 
