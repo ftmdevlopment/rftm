@@ -67,7 +67,7 @@ protected:
     // calling when leave this UI
     virtual void OnLeave();
 
-    long last_frame_cost_; // last frame time consumption in microsecond(us).
+    long get_last_frame_cost();
 
     double get_last_alarm_ts();
 private:
@@ -76,6 +76,7 @@ private:
     static int s_fps_expected;
     static int event_callback(int fd, uint32_t epevents, void *data);
 
+    long last_frame_cost_; // last frame time consumption in microsecond(us).
     struct timespec last_alarm_ts_;
     long alarm_ms_;
 };

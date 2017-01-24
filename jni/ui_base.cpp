@@ -341,3 +341,8 @@ double UiBase::get_last_alarm_ts()
     return last_alarm_ts_.tv_sec + last_alarm_ts_.tv_nsec/1e9;
 }
 
+long UiBase::get_last_frame_cost()
+{
+    return last_frame_cost_;
+}
+
