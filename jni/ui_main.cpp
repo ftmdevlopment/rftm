@@ -52,9 +52,6 @@ static const int kFontLineDist = 4;
 static const int kQRCellSize = 4;
 static const int kQRBorderWidth = 8;
 
-//static const char* kDefaultQrText = "846425A00481,010116000978,0a22,2.1.3,111,212000010000000000,,,00000bf0";
-//static const char* kDefaultSN2 = "012345678901";
-//static const char* kDefaultSN3 = "012345678901";
 
 static char state2result(int state)
 {
@@ -72,25 +69,46 @@ static char state2result(int state)
 
 void UiMain::draw_main()
 {
-    // test state, name, result
+    static int W = gr_fb_width();
+    static int H = gr_fb_height();
+    int FW = 0, FH = 0;
+    gr_font_size(&FW, &FH);
+
+    QrCode qrCode = QrCode::encodeText(qrdata_.to_string().c_str(), QrCode::Ecc::LOW);
+
+    // recalculate positions
+    qrsize_ = qrCode.size;
+    qrbase_size_ = qrsize_ * kQRCellSize + 2 * kQRBorderWidth;
+    qrbase_pos_.x = (W - qrbase_size_)/2;
+    qrbase_pos_.y = (H - qrbase_size_)/2;
+    qrcode_pos_.x = qrbase_pos_.x + kQRBorderWidth;
+    qrcode_pos_.y = qrbase_pos_.y + kQRBorderWidth;
+
+    name_pos_.x = W/2;
+    name_pos_.y = qrbase_pos_.y - FH/2 - kFontLineDist;
+    state_pos_.x = W/2;
+    state_pos_.y = qrbase_pos_.y - (FH/2 + FH) - kFontLineDist;
+    for (int i = 0; i < kResultLines; i++) {
+        result_pos_[i].x = W/2;
+        result_pos_[i].y = qrbase_pos_.y + qrbase_size_ + i*(FH + kFontLineDist) + (FH/2) + kFontLineDist;
+    }
+
+    // draw test state, name
     set_color(&font_color);
     fill_text(state_pos_.x, state_pos_.y, tests_[focus_case_id]->state_str(), 0);
     fill_text(name_pos_.x, name_pos_.y, tests_[focus_case_id]->name(), 0);
 
-    // split to lines
-    std::string lines[kResultLines];
+    // split result lines
+    std::vector<std::string> lines(kResultLines);
     std::string result = tests_[focus_case_id]->result();
-    split_string(lines, kResultLines, result, '\n', kResultLineMaxChars);
+    split_string(&lines[0], kResultLines, result, '\n', kResultLineMaxChars);
 
-    // draw each line.
+//    lines.push_back(format_string("last frame cost %02d", get_last_frame_cost()/1000)); // show frame cost
+
+    // draw result lines.
     for (int i = 0; i < kResultLines; i++) {
         fill_text(result_pos_[i].x, result_pos_[i].y, lines[i].c_str(), 0);
     }
-
-    // QR code
-    set_color(&qr_bg_color); // background
-    gr_fill(qrbase_pos_.x, qrbase_pos_.y, qrbase_pos_.x + qrbase_size_, qrbase_pos_.y + qrbase_size_);
-    set_color(&qr_fg_color); // foreground
 
     // update qr data
     std::string test_results;
@@ -100,30 +118,12 @@ void UiMain::draw_main()
     qrdata_.set_results(test_results);
     qrdata_.update_checksum();
 
-    QrCode qrCode = QrCode::encodeText(qrdata_.to_string().c_str(), QrCode::Ecc::LOW);
+    // draw QR code backgound
+    set_color(&qr_bg_color); // background
+    gr_fill(qrbase_pos_.x, qrbase_pos_.y, qrbase_pos_.x + qrbase_size_, qrbase_pos_.y + qrbase_size_);
 
-    // recalculate qr position
-    qrsize_ = qrCode.size;
-    int size = qrsize_ * kQRCellSize + 2 * kQRBorderWidth;
-    qrbase_size_ = size;
-    static int W = gr_fb_width();
-    static int H = gr_fb_height();
-    qrbase_pos_.x = (W - size)/2;
-    qrbase_pos_.y = (H - size)/2;
-    qrcode_pos_.x = qrbase_pos_.x + kQRBorderWidth;
-    qrcode_pos_.y = qrbase_pos_.y + kQRBorderWidth;
-    int fw, fh;
-    gr_font_size(&fw, &fh);
-    name_pos_.x = W/2;
-    name_pos_.y = qrbase_pos_.y - fh/2 - kFontLineDist;
-    state_pos_.x = W/2;
-    state_pos_.y = qrbase_pos_.y - (fh/2 + fh) - kFontLineDist;
-
-    for (int i = 0; i < kResultLines; i++) {
-        result_pos_[i].x = W/2;
-        result_pos_[i].y = qrbase_pos_.y + size + i*(fh + kFontLineDist) + (fh/2) + kFontLineDist;
-    }
-
+    // draw QR code
+    set_color(&qr_fg_color); // foreground
     for (int i = 0; i < qrsize_; i++) {
         for (int j = 0; j < qrsize_; j++) {
             if (qrCode.getModule(i, j)) {
@@ -162,13 +162,9 @@ UiMain::UiMain()
     t0.b.y = t0.a.y - kArrowLength;
     t0.c.y = t0.b.y;
     for (i = 0; i < kCases; i++) {
-//        double a = (M_PI/6) + (i+0.5) * ((2*M_PI - (M_PI/6)*2)/kCases);
         double a = kFreezeAngle/2 + (i + 0.5) * (2*M_PI - kFreezeAngle)/kCases;
-//        double a = i * (2*M_PI)/kCases;
         c[i].x = x0 - case_center_radius * sin(a);
         c[i].y = y0 + case_center_radius * cos(a);
-        printf("a: %.3f*M_PI, %3.1f ", a/M_PI, a/M_PI*180.0);
-        printf("c[%d] = {%d, %d}\n", i, c[i].x, c[i].y);
 
         rotate_with(&t[i].a, &t0.a, &center, -a);
         rotate_with(&t[i].b, &t0.b, &center, -a);
@@ -183,7 +179,6 @@ UiMain::UiMain()
             .build();
 
     set_alarm(1);
-    memset(tests_, 0, sizeof(tests_));
 
     int count = 0;
     tests_[count++] = new VersionTest(this, "Version test");
@@ -234,7 +229,7 @@ void UiMain::Draw()
     // main
     fill_circle_ex(&main_color, x0, y0, main_radius);
 
-    // QR code
+    // QR code, test name/state/result
     draw_main();
 
     // cases
