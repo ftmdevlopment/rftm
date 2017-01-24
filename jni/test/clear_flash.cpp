@@ -8,7 +8,9 @@ void ClearFlash::RunTest()
 {
     std::string out, userdata, cache;
 
-    result("confirm/cancel ?");
+    result("confirm/cancel ?\n"
+           "touch right: confirm\n"
+           "touch left:  cancel");
 
     clear_judge_result();
     if (!wait_for_judge_result()) {
