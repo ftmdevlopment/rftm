@@ -10,10 +10,14 @@ static const char kMarked = '@';
 void KeyTest::OnEnter()
 {
     UiTest::OnEnter();
+
+    XLOGI("atomic_int is lock-free: %d", get_lock_free_type());
+
     top_ = kNoMark;
     left_ = std::string(kValues, kNoMark);
     right_ = std::string(kValues, kNoMark);
-    time_left_ = kTestSeconds;
+    set_left_time(kTestSeconds);
+
     update_and_check_result();
 }
 
@@ -72,21 +76,44 @@ void KeyTest::OnRightTouch(int value)
 
 void KeyTest::update_and_check_result()
 {
+    int left_seconds = get_left_time();
     if (check()) {
-        if (time_left_ > 0) {
-            time_left_ = 0;
+        if (left_seconds > 0) {
+            set_left_time(0);
         }
     }
     result("L:" + left_ + "\n"
            + "R:" + right_ + "\n"
            + "Top:" + top_ + "\n"
-           + (time_left_ > 0 ? format_string("time left: %ds", time_left_) : std::string()));
+           + (left_seconds > 0 ? format_string("time left: %ds", left_seconds) : std::string()));
 }
 
 void KeyTest::RunTest()
 {
-    while (time_left_-- > 0) {
+    while (get_left_time() > 0) {
         update_and_check_result();
         sleep(1);
+        sub_left_time(1);
     }
+}
+
+void KeyTest::set_left_time(int n)
+{
+    atomic_store(&time_left_, n);
+}
+
+int KeyTest::get_left_time()
+{
+    return atomic_load(&time_left_);
+}
+
+void KeyTest::sub_left_time(int n)
+{
+//  set_left_time(get_left_time() - n);
+    atomic_fetch_sub(&time_left_, n);
+}
+
+int KeyTest::get_lock_free_type()
+{
+    return atomic_is_lock_free(&time_left_);
 }

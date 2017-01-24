@@ -7,6 +7,8 @@
 
 #include "../ui_test.h"
 
+#include <stdatomic.h>  // in C11 standard
+
 class KeyTest : public UiTest
 {
 public:
@@ -29,6 +31,12 @@ private:
 
     void update_and_check_result();
 
+    int get_left_time();
+    void set_left_time(int n);
+    void sub_left_time(int n);
+
+    int get_lock_free_type();
+
 private:
     static const int kTestSeconds = 30;
     static const int kValues = 8;
@@ -36,7 +44,7 @@ private:
     std::string left_;
     std::string right_;
     char top_;
-    int time_left_;  // for some key FAILED
+    atomic_int time_left_;  // for some key FAILED
 };
 
 
