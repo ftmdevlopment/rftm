@@ -23,11 +23,6 @@ void KeyTest::OnEnter()
 
 void KeyTest::OnLeave()
 {
-    if (check()) {
-        pass();
-    } else {
-        fail();
-    }
     UiTest::OnLeave();
 }
 
@@ -95,6 +90,12 @@ void KeyTest::RunTest()
         sleep(1);
         sub_left_time(1);
     }
+    if (check()) {
+        pass();
+    } else {
+        fail();
+    }
+    sleep(1);
 }
 
 void KeyTest::set_left_time(int n)
