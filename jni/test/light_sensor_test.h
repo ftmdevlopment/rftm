@@ -7,11 +7,12 @@
 
 #include "../ui_test.h"
 #include "../blocking_queue.h"
+#include <stdatomic.h>
 
-class LightSensorTest : public UiUserJudgeTest
+class LightSensorTest : public UiAutoJudgeTest
 {
 public:
-    USER_JUDGE_TEST_ENTRY(LightSensorTest) {}
+    AUTO_JUDGE_TEST_ENTRY(LightSensorTest) {}
 private:
     void OnEnter();
 
@@ -21,7 +22,12 @@ private:
 
     void RunTest();
 
-    void publish_sensor_value(int value);
+    void set_sensor_value(int value);
+    int get_sensor_value();
+
+private:
+    const static int kTestSeconds = 10;
+    atomic_int sensor_value_;
 };
 
 
