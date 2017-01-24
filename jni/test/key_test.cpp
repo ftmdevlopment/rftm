@@ -72,28 +72,21 @@ void KeyTest::OnRightTouch(int value)
 
 void KeyTest::update_and_check_result()
 {
+    if (check()) {
+        if (time_left_ > 0) {
+            time_left_ = 0;
+        }
+    }
     result("L:" + left_ + "\n"
            + "R:" + right_ + "\n"
            + "Top:" + top_ + "\n"
-           + format_string("time left: %ds", time_left_));
-    if (check()) {
-        if (time_left_ > 0) {
-            result("L:" + left_ + "\n"
-                   + "R:" + right_ + "\n"
-                   + "Top:" + top_ + "\n"
-            );
-            time_left_ = 0;
-        }
-        pass();
-    }
+           + (time_left_ > 0 ? format_string("time left: %ds", time_left_) : std::string()));
 }
 
 void KeyTest::RunTest()
 {
-    while (time_left_ > 0) {
+    while (time_left_-- > 0) {
         update_and_check_result();
         sleep(1);
-        time_left_--;
     }
-    fail();
 }
