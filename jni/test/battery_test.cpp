@@ -19,40 +19,25 @@ void BatteryTest::RunTest()
     clear_judge_result();
 }
 
+static std::string cat(std::string path)
+{
+    std::string result;
+    if (run_command("cat " + path, &result) < 0) {
+        XLOGE("cat %s failed, %s", path.c_str(), strerror(errno));
+    }
+    return result;
+}
+
 void BatteryTest::Draw()
 {
     if (timer_.elapsed() - last_time_ > kSampleTime) {
-        std::string out;
-        bool charger_online = false;
-        bool battery_present = false;
-        int battery_voltage = 0;
-        int battery_capacity = 0;
-        int battery_current = 0;
+        bool charger_online = ::atoi(cat(CHARGER_ONLINE).c_str()) > 0;
+        bool battery_present = ::atoi(cat(BATTERY_PRESENT).c_str()) > 0;
 
-#define CAT(path) \
-        do { \
-            if (run_command(format_string("cat %s", path), &out) < 0) { \
-                XLOGE("read %s failed, %s", path, strerror(errno)); \
-                return; \
-            } \
-        } while (0)
+        int battery_voltage = ::atoi(cat(VOLTAGE_PATH).c_str());
+        int battery_current = ::atoi(cat(CURRENT_PATH).c_str());
 
-        CAT(BATTERY_PRESENT);
-        battery_present = ::atoi(out.c_str()) > 0;
-
-        CAT(CHARGER_ONLINE);
-        charger_online = ::atoi(out.c_str()) > 0;
-
-        CAT(CAPACITY_PATH);
-        battery_capacity = ::atoi(out.c_str());
-
-        CAT(VOLTAGE_PATH);
-        battery_voltage = ::atoi(out.c_str());
-
-        CAT(CURRENT_PATH);
-        battery_current = ::atoi(out.c_str());
-
-#undef CAT
+        int battery_capacity = ::atoi(cat(CAPACITY_PATH).c_str());
 
         result(format_string("Charger: %s\n"
                                      "Battery: %s\n"
