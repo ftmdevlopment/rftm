@@ -5,6 +5,7 @@ libs/
 *.swp
 
 .*
+!.travis.yml
 !.gitignore
 
 cmake*

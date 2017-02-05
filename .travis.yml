@@ -1,0 +1,42 @@
+language: cpp
+
+os:
+  - linux
+  - osx
+
+compiler:
+  - clang
+
+env:
+  matrix:
+    - CONF=release ARCH=arm
+#    - CONF=debug   ARCH=arm
+
+before_install:
+#  - echo $PATH
+#  - for i in `echo $PATH| sed 's/:/ /g'`; do echo $i; ls -l $i; echo; done
+  - curl --version
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then
+      curl https://dl.google.com/android/repository/android-ndk-r13b-linux-x86_64.zip -o ndk-r13b.zip;
+    else
+      curl https://dl.google.com/android/repository/android-ndk-r13b-darwin-x86_64.zip -o ndk-r13b.zip;
+    fi
+  - unzip ndk-r13b.zip | grep '/ndk'
+  - NDK_HOME=`pwd`/android-ndk-r13b
+  - export PATH=$PATH:$NDK_HOME
+
+install: true
+
+before_script:
+  - echo before script
+#  - which ndk-build
+
+script:
+  - ndk-build
+
+after_success:
+  - echo build success
+
+after_failure:
+  - echo build failure
+
