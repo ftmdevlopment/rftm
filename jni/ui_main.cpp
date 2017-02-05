@@ -85,20 +85,22 @@ void UiMain::draw_main()
     QrCode qrCode = QrCode::encodeText(qrdata_.to_string().c_str(), QrCode::Ecc::LOW);
 
     // recalculate positions
-    qrsize_ = qrCode.size;
-    qrbase_size_ = qrsize_ * kQRCellSize + 2 * kQRBorderWidth;
-    qrbase_pos_.x = (W - qrbase_size_)/2;
-    qrbase_pos_.y = (H - qrbase_size_)/2;
-    qrcode_pos_.x = qrbase_pos_.x + kQRBorderWidth;
-    qrcode_pos_.y = qrbase_pos_.y + kQRBorderWidth;
+    int qr_size = qrCode.size;
+    int qr_bg_width = qr_size * kQRCellSize + 2 * kQRBorderWidth;
+    qr_bg_rect_.x = (W - qr_bg_width)/2;
+    qr_bg_rect_.y = (H - qr_bg_width)/2;
+    qr_bg_rect_.w = qr_bg_width;
+    qr_bg_rect_.h = qr_bg_width;
+    qrcode_pos_.x = qr_bg_rect_.x + kQRBorderWidth;
+    qrcode_pos_.y = qr_bg_rect_.y + kQRBorderWidth;
 
     name_pos_.x = W/2;
-    name_pos_.y = qrbase_pos_.y - FH/2 - kFontLineDist;
+    name_pos_.y = qr_bg_rect_.y - FH/2 - kFontLineDist;
     state_pos_.x = W/2;
-    state_pos_.y = qrbase_pos_.y - (FH/2 + FH) - kFontLineDist;
+    state_pos_.y = qr_bg_rect_.y - (FH/2 + FH) - kFontLineDist;
     for (int i = 0; i < kResultLines; i++) {
         result_pos_[i].x = W/2;
-        result_pos_[i].y = qrbase_pos_.y + qrbase_size_ + i*(FH + kFontLineDist) + (FH/2) + kFontLineDist;
+        result_pos_[i].y = qr_bg_rect_.y + qr_bg_rect_.h + i*(FH + kFontLineDist) + (FH/2) + kFontLineDist;
     }
 
     // draw test state, name
@@ -120,12 +122,12 @@ void UiMain::draw_main()
 
     // draw QR code background
     set_color(&qr_bg_color); // background
-    gr_fill(qrbase_pos_.x, qrbase_pos_.y, qrbase_pos_.x + qrbase_size_, qrbase_pos_.y + qrbase_size_);
+    fill_rect(&qr_bg_rect_);
 
     // draw QR code
     set_color(&qr_fg_color); // foreground
-    for (int i = 0; i < qrsize_; i++) {
-        for (int j = 0; j < qrsize_; j++) {
+    for (int i = 0; i < qr_size; i++) {
+        for (int j = 0; j < qr_size; j++) {
             if (qrCode.getModule(i, j)) {
                 int x = qrcode_pos_.x + i*kQRCellSize;
                 int y = qrcode_pos_.y + j*kQRCellSize;

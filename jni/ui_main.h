@@ -75,11 +75,9 @@ private:
     point_t case_centers[kCases];
     point_t name_pos_;
     point_t state_pos_;
-    point_t qrbase_pos_;
     point_t qrcode_pos_;
-    int qrbase_size_;
+    rect_t qr_bg_rect_;
 
-    int qrsize_;
     QrData qrdata_;
 
     point_t result_pos_[kResultLines];
