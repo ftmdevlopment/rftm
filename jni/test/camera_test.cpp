@@ -2,7 +2,7 @@
 // Created by dev on 16-12-15.
 //
 
-#include <wait.h>
+#include <sys/wait.h>
 #include <fcntl.h>
 #include "camera_test.h"
 
