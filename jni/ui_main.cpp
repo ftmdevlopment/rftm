@@ -74,6 +74,14 @@ void UiMain::draw_main()
     int FW = 0, FH = 0;
     gr_font_size(&FW, &FH);
 
+    // update qr data
+    std::string test_results;
+    for (int i = 0; i < kCases; i++) {
+        test_results += state2result(tests_[i]->state());
+    }
+    qrdata_.set_results(test_results);
+    qrdata_.update_checksum();
+
     QrCode qrCode = QrCode::encodeText(qrdata_.to_string().c_str(), QrCode::Ecc::LOW);
 
     // recalculate positions
@@ -110,15 +118,7 @@ void UiMain::draw_main()
         fill_text(result_pos_[i].x, result_pos_[i].y, lines[i].c_str(), 0);
     }
 
-    // update qr data
-    std::string test_results;
-    for (int i = 0; i < kCases; i++) {
-        test_results += state2result(tests_[i]->state());
-    }
-    qrdata_.set_results(test_results);
-    qrdata_.update_checksum();
-
-    // draw QR code backgound
+    // draw QR code background
     set_color(&qr_bg_color); // background
     gr_fill(qrbase_pos_.x, qrbase_pos_.y, qrbase_pos_.x + qrbase_size_, qrbase_pos_.y + qrbase_size_);
 
