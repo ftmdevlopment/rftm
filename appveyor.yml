@@ -1,0 +1,19 @@
+version: 1.0.{build}
+
+configuration:
+- Release
+
+environment:
+  matrix:
+  - VS_VERSION: 14
+    VS_PLATFORM: win64
+
+install:
+  - git submodule update --init --recursive
+  - curl https://dl.google.com/android/repository/android-ndk-r13b-windows-x86_64.zip -o ndk-r13b.zip
+  - 7z x ndk-r13b.zip -oC:\
+  - set PATH=%PATH%;C:\android-ndk-r13b
+  - cd jni\zlib\ && fix_symlink.bat && cd ..\..
+  - ndk-build
+
+build: none
