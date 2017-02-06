@@ -4,12 +4,14 @@ Rokid Factory Test Mode(RFTM)
 build status
 -------------
 
-| [Linux & Mac OS][travis-ci] | [Windows](#)           |
-|-----------------------------|------------------------|
-| ![travis-ci-status]         | [To be continue...]    |
+|               Linux & Mac OS               |                     Windows                    |
+|--------------------------------------------|------------------------------------------------|
+| [![Build Status][travis-badge]][travis-ci] | [![Build status][appveyor-badge]][appveyor-ci] |
 
 [travis-ci]:https://travis-ci.org/ftmdevlopment/rftm
-[travis-ci-status]: https://travis-ci.org/ftmdevlopment/rftm.svg?branch=master
+[travis-badge]: https://travis-ci.org/ftmdevlopment/rftm.svg?branch=master
+[appveyor-ci]: https://ci.appveyor.com/project/xusiwei/rftm
+[appveyor-badge]: https://ci.appveyor.com/api/projects/status/4qb35hl2f8fpi1wt?svg=true
 
 quick start
 ------------
