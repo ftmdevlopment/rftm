@@ -5,13 +5,13 @@
 #ifndef RFTM_UI_BASE_H
 #define RFTM_UI_BASE_H
 
-#include <pthread.h>
-#include <stdint.h>
 #include <linux/input.h>
+
+class UiCore;  // forward declaration
 
 class UiBase
 {
-    friend struct GlobalConext;
+    friend class UiCore;
 public:
     UiBase();
 
@@ -19,24 +19,11 @@ public:
 
     void run();
 
+    void stop();
+
     void set_alarm(long s);
 
     void set_alarm_ms(long ms);
-
-    struct Event {
-        uint16_t source;
-        uint32_t value;
-        int fd;
-        struct input_event ev;
-        void* data;
-    };
-
-    // for event source:
-    static const uint16_t UI_TOP_KEY = 1;
-    static const uint16_t UI_POWER_KEY = 2;
-    static const uint16_t UI_LEFT_TOUCH = 0x100;
-    static const uint16_t UI_RIGHT_TOUCH =0x200;
-    static const uint16_t UI_UNKNOW = 0;
 
     // for common settings init:
     static void SetIgnoreRelease(bool);
@@ -44,7 +31,6 @@ public:
     static int GetExpectedFPS();
 
     // for runtime usage:
-    static void SetRunning(bool);
     static void SetCurrentUI(UiBase*);
     static UiBase* GetCurrentUI();
 
@@ -70,12 +56,8 @@ protected:
     long get_last_frame_cost();
 
     double get_last_alarm_ts();
-private:
-    static bool s_ignore_release;
-    static bool s_running;
-    static int s_fps_expected;
-    static int event_callback(int fd, uint32_t epevents, void *data);
 
+private:
     long last_frame_cost_; // last frame time consumption in microsecond(us).
     struct timespec last_alarm_ts_;
     long alarm_ms_;

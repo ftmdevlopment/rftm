@@ -52,6 +52,7 @@ endif
 $(info FLAGS: ${LOCAL_CFLAGS})
 
 LOCAL_SRC_FILES := \
+    ui_core.cpp \
     ui_base.cpp \
     ui_main.cpp \
     ui_test.cpp \
