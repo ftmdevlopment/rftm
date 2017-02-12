@@ -24,3 +24,11 @@ quick start
   1. `git clone https://github.com/ftmdevlopment/rftm.git`.
   2. `cd rftm && git submodule update --init --recursive`.
 3. ndk-build and run
+
+Screenshot
+-----------
+
+Main UI:
+
+![main UI](Screenshots/main_ui.png)
+
