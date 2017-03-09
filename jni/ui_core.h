@@ -33,6 +33,8 @@ public:
     UiBase* get_current_ui() const;
     bool is_running() const;
     int get_expected_fps() const;
+    int get_expected_frame_cost_us() const;
+    int get_expected_frame_cost_ms() const;
     bool ignore_key_release() const;
 
     // setters

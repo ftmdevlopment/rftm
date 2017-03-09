@@ -128,7 +128,7 @@ int UiCore::handle_event(int fd, uint32_t epevents, void *data)
 void* UiCore::read_event(void *)
 {
     while (instance().is_running()) {
-        if (!ev_wait(-1)) {
+        if (!ev_wait(instance().get_expected_frame_cost_ms())) {
             ev_dispatch();  // handle_event run in here.
         }
     }
@@ -249,7 +249,7 @@ void UiCore::run(UiBase *current)
 
         long cost_us = diff_timespec_us(&ts_end, &ts_start);
         pCurrent->last_frame_cost_ = cost_us;
-        long expected_cost_us = US_PER_S / get_expected_fps();
+        long expected_cost_us = get_expected_frame_cost_us();
         long pad = expected_cost_us - cost_us;
         while (pad < 0) pad += expected_cost_us;
 //        XLOGI("frame cost actual: %06d, expected %06d, pad: %06d", cost_us, expected_cost_us, pad);
@@ -269,6 +269,18 @@ int UiCore::get_expected_fps() const
 {
     ScopedLock _lock(&mutex_);
     return expected_fps_;
+}
+
+int UiCore::get_expected_frame_cost_us() const
+{
+    ScopedLock _lock(&mutex_);
+    return US_PER_S / expected_fps_;
+}
+
+int UiCore::get_expected_frame_cost_ms() const
+{
+    ScopedLock _lock(&mutex_);
+    return MS_PER_S / expected_fps_;
 }
 
 bool UiCore::ignore_key_release() const
